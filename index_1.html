@@ -1,0 +1,1301 @@
+<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body>
+<title>Kod Kaşifleri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap">
+<style>
+/* Layout: an island-map game hub — big tappable cards on a water-blue ground, each game a full stage with board + controls side by side (stacks on phones). Deliberately single bright theme for children. */
+:root{
+  --sky:#E4F3FA; --paper:#FFFFFF; --ink:#16324F; --ink-soft:#4C6479; --line:#C7DEEA;
+  --coral:#FF6B4A; --sun:#FFC63A; --leaf:#3FAE5E; --plum:#7457D3; --sea:#3EA6D2; --sea-deep:#2385B3;
+  --grass:#A8DB7C; --grass-2:#9AD16E; --sand:#F6E3B4;
+  --up:#3FAE5E; --down:#E5484D; --left:#2F8FE0; --right:#F2B705;
+  --font-display:"Baloo 2","Trebuchet MS","Segoe UI",system-ui,sans-serif;
+  --font-body:"Nunito","Segoe UI",system-ui,-apple-system,sans-serif;
+  --r:18px; color-scheme:light;
+}
+*{box-sizing:border-box}
+body{background:var(--sky);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.5;margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--plum);outline-offset:2px}
+h1,h2,h3{font-family:var(--font-display);line-height:1.1;text-wrap:balance;margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:0 48px}
+
+/* top bar */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--sky);border-bottom:2px solid var(--line)}
+.top .in{max-width:1180px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:12px}
+.logo{display:flex;align-items:center;gap:8px;font-family:var(--font-display);font-weight:800;font-size:24px;letter-spacing:.2px;background:none;border:0;padding:0}
+.logo .mark{width:38px;height:38px;border-radius:12px;background:var(--ink);color:var(--sun);display:grid;place-items:center;font-size:20px;transform:rotate(-6deg)}
+.logo small{display:block;font-family:var(--font-body);font-weight:700;font-size:11px;color:var(--ink-soft);letter-spacing:.6px;text-transform:uppercase;line-height:1}
+.top .sp{flex:1}
+.pill-btn{border:2px solid var(--ink);background:var(--paper);border-radius:999px;padding:6px 14px;font-weight:800;display:inline-flex;align-items:center;gap:6px;box-shadow:0 3px 0 var(--ink)}
+.pill-btn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+.icon-btn{width:42px;height:42px;border-radius:50%;border:2px solid var(--ink);background:var(--paper);font-size:18px;box-shadow:0 3px 0 var(--ink);display:grid;place-items:center;padding:0}
+
+/* home */
+.hero{display:grid;grid-template-columns:1.2fr 1fr;gap:28px;align-items:center;padding-block:28px 12px}
+.hero h1{font-size:clamp(36px,6vw,64px);font-weight:800;letter-spacing:-.5px}
+.hero h1 span{color:var(--coral)}
+.hero p{font-size:18px;color:var(--ink-soft);max-width:52ch;margin:10px 0 0}
+.hero .map{background:var(--sea);border-radius:28px;padding:18px;border:3px solid var(--ink);box-shadow:0 6px 0 var(--ink);position:relative;overflow:hidden}
+.hero .map .mini{display:grid;grid-template-columns:repeat(6,1fr);gap:4px}
+.hero .map .mini i{aspect-ratio:1;border-radius:8px;background:var(--grass);display:grid;place-items:center;font-style:normal;font-size:clamp(14px,3vw,26px)}
+.hero .map .mini i.w{background:transparent}
+.hero .map .mini i.p{background:#FFE08A}
+.zone{margin-top:34px}
+.zone-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.zone-head h2{font-size:30px;font-weight:800}
+.zone-head .tag{font-weight:800;font-size:12px;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:999px;color:#fff}
+.zone-head p{margin:0;color:var(--ink-soft);flex-basis:100%}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.gcard{text-align:left;background:var(--paper);border:3px solid var(--ink);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:6px;box-shadow:0 5px 0 var(--ink);transition:transform .12s}
+.gcard:hover{transform:translateY(-3px)}
+.gcard:active{transform:translateY(2px);box-shadow:0 2px 0 var(--ink)}
+.gcard .ico{font-size:40px;line-height:1;width:64px;height:64px;border-radius:16px;display:grid;place-items:center;margin-bottom:4px}
+.gcard h3{font-size:22px;font-weight:800}
+.gcard p{margin:0;color:var(--ink-soft);font-size:15px}
+.gcard .meta{margin-top:auto;padding-top:8px;display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:800;color:var(--ink-soft)}
+.gcard .stars{color:#D89A00;letter-spacing:1px}
+.teacher{margin-top:40px;background:var(--paper);border:2px solid var(--line);border-radius:var(--r);padding:18px 20px}
+.teacher summary{font-family:var(--font-display);font-weight:800;font-size:20px;cursor:pointer}
+.teacher table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+.teacher th,.teacher td{text-align:left;padding:8px 10px;border-top:1px solid var(--line);vertical-align:top}
+.teacher th{font-size:12px;letter-spacing:.6px;text-transform:uppercase;color:var(--ink-soft)}
+.tablebox{overflow-x:auto}
+
+/* game stage */
+.ghead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-block:18px 10px}
+.ghead h2{font-size:32px;font-weight:800}
+.ghead .lv{font-weight:800;color:var(--ink-soft)}
+.ghead .sp{flex:1}
+.task{background:var(--paper);border:2px solid var(--line);border-radius:14px;padding:10px 14px;display:flex;gap:10px;align-items:center;font-weight:700;font-size:17px;margin-bottom:14px}
+.task .say{flex:none}
+.stage{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:20px;align-items:start}
+.panel{background:var(--paper);border:3px solid var(--ink);border-radius:var(--r);padding:16px;box-shadow:0 5px 0 var(--ink);min-width:0}
+.panel h3{font-size:20px;margin-bottom:8px}
+.muted{color:var(--ink-soft)}
+.small{font-size:14px}
+
+/* board */
+.boardwrap{background:var(--sea);border:3px solid var(--ink);border-radius:22px;padding:12px;box-shadow:0 5px 0 var(--ink)}
+.board{position:relative;display:grid;gap:4px;container-type:inline-size;margin:0 auto}
+.cell{aspect-ratio:1;border-radius:10px;display:grid;place-items:center;position:relative}
+.cell.g{background:var(--grass)}
+.cell.g.alt{background:var(--grass-2)}
+.cell.w{background:transparent;box-shadow:inset 0 0 0 2px rgba(255,255,255,.18)}
+.cell.r{background:var(--grass)}
+.cell .e{font-size:calc(100cqw / var(--w) * .58);line-height:1;user-select:none}
+.cell.s{background:#FFE08A}
+.cell .e.got{transform:scale(0);opacity:0;transition:.3s}
+.hero-sprite{position:absolute;display:grid;place-items:center;pointer-events:none;transition:left .32s ease,top .32s ease;z-index:3}
+.hero-sprite .e{font-size:calc(100cqw / var(--w) * .66);line-height:1;transition:transform .2s;display:inline-block}
+.hero-sprite.bump .e{animation:bump .35s}
+.hero-sprite.win .e{animation:hop .6s 2}
+@keyframes bump{30%{transform:translateX(var(--bx,0)) translateY(var(--by,0)) rotate(-12deg)}100%{transform:none}}
+@keyframes hop{50%{transform:translateY(-30%) scale(1.15)}}
+.ripple{position:absolute;inset:0;pointer-events:none;border-radius:22px}
+
+/* command palette & program */
+.palette{display:flex;flex-wrap:wrap;gap:10px}
+.cmd{width:64px;height:64px;border-radius:16px;border:3px solid var(--ink);display:grid;place-items:center;font-size:30px;font-weight:900;color:#fff;box-shadow:0 4px 0 var(--ink);padding:0}
+.cmd:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.cmd.U{background:var(--up)} .cmd.D{background:var(--down)} .cmd.L{background:var(--left)} .cmd.R{background:var(--right);color:var(--ink)}
+.cmd.loop{background:var(--plum);font-size:15px;width:auto;padding:0 12px;font-family:var(--font-display)}
+.cmd svg{width:32px;height:32px}
+.prog{min-height:76px;border:3px dashed var(--line);border-radius:14px;padding:8px;display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start;margin-block:12px}
+.prog:empty::before{content:attr(data-empty);color:var(--ink-soft);font-weight:700;padding:14px 6px}
+.chip{width:44px;height:44px;border-radius:12px;border:2px solid var(--ink);display:grid;place-items:center;color:#fff;padding:0;position:relative}
+.chip svg{width:24px;height:24px}
+.chip.U{background:var(--up)} .chip.D{background:var(--down)} .chip.L{background:var(--left)} .chip.R{background:var(--right);color:var(--ink)}
+.chip.now{outline:4px solid var(--ink);outline-offset:2px;transform:scale(1.1)}
+.chip.bad{animation:shake .4s 2}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.loopbox{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:5px 6px;border:3px solid var(--plum);border-radius:14px;background:#EFEAFD}
+.loopbox.open{border-style:dashed}
+.loopbox .lh{display:flex;align-items:center;gap:4px;font-family:var(--font-display);font-weight:800;color:var(--plum)}
+.loopbox .cnt{border:2px solid var(--plum);background:#fff;border-radius:10px;min-width:40px;height:36px;font-weight:800;color:var(--plum)}
+.loopbox .done{border:0;background:var(--plum);color:#fff;border-radius:10px;padding:4px 10px;font-weight:800}
+.loopbox .x{border:0;background:none;color:var(--plum);font-weight:900;font-size:18px;padding:0 4px}
+.loopbox .lb{display:flex;gap:4px;flex-wrap:wrap;min-height:44px;align-items:center}
+.loopbox .lb:empty::before{content:"oku buraya ekle";font-size:13px;color:var(--plum);font-weight:700;padding:0 6px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.go{background:var(--leaf);color:#fff;border:3px solid var(--ink);border-radius:14px;padding:10px 20px;font-family:var(--font-display);font-weight:800;font-size:20px;box-shadow:0 4px 0 var(--ink)}
+.go:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+.go[disabled]{opacity:.5;cursor:not-allowed}
+.ghost{background:var(--paper);border:2px solid var(--ink);border-radius:12px;padding:8px 14px;font-weight:800}
+.counter{font-weight:800;color:var(--ink-soft);font-size:14px}
+.counter b{color:var(--ink)}
+.msg{min-height:28px;font-weight:800;margin-top:10px}
+.msg.bad{color:var(--down)} .msg.good{color:var(--leaf)}
+
+/* level select */
+.levels{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px}
+.lvbtn{background:var(--paper);border:3px solid var(--ink);border-radius:16px;padding:12px 8px;box-shadow:0 4px 0 var(--ink);display:flex;flex-direction:column;align-items:center;gap:2px}
+.lvbtn b{font-family:var(--font-display);font-size:30px;line-height:1}
+.lvbtn span{font-size:13px;font-weight:700;color:var(--ink-soft);text-align:center;line-height:1.2}
+.lvbtn i{font-style:normal;color:#D89A00;letter-spacing:1px;font-size:14px}
+.lvbtn.new{border-style:dashed}
+
+/* overlay */
+.overlay{position:fixed;inset:0;background:rgba(22,50,79,.55);display:grid;place-items:center;z-index:50;padding:16px}
+.modal{background:var(--paper);border:3px solid var(--ink);border-radius:24px;padding:24px;max-width:420px;width:100%;text-align:center;box-shadow:0 8px 0 var(--ink);animation:pop .3s}
+@keyframes pop{from{transform:scale(.8);opacity:0}}
+.modal .big{font-size:56px;line-height:1}
+.modal h3{font-size:30px;margin:6px 0}
+.modal .st{font-size:40px;letter-spacing:6px;color:#D89A00}
+.modal .st .off{color:var(--line)}
+.modal .row{justify-content:center;margin-top:16px}
+
+/* robot chef & pattern */
+.steps{display:grid;gap:10px}
+.step{display:flex;align-items:center;gap:12px;background:var(--paper);border:3px solid var(--ink);border-radius:14px;padding:10px 12px;font-weight:700;font-size:17px;text-align:left;box-shadow:0 3px 0 var(--ink);width:100%}
+.step .em{font-size:30px;flex:none}
+.step.used{opacity:.3;pointer-events:none}
+.slot{display:flex;align-items:center;gap:12px;border:3px dashed var(--line);border-radius:14px;padding:8px 12px;min-height:60px;font-weight:700;font-size:17px;background:var(--paper);text-align:left;width:100%}
+.slot .n{width:34px;height:34px;flex:none;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-family:var(--font-display);font-weight:800}
+.slot.filled{border-style:solid;border-color:var(--ink)}
+.slot.ok{border-color:var(--leaf);background:#E7F7EA}
+.slot.no{border-color:var(--down);background:#FDE8E8}
+.seq{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:18px 8px}
+.seq .it{width:64px;height:64px;border-radius:16px;background:var(--sky);display:grid;place-items:center;font-size:38px;border:2px solid var(--line)}
+.seq .it.q{background:var(--sun);border:3px dashed var(--ink);font-family:var(--font-display);font-weight:800}
+.choices{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.choice{width:88px;height:88px;border-radius:20px;border:3px solid var(--ink);background:var(--paper);font-size:46px;box-shadow:0 4px 0 var(--ink);padding:0}
+.choice.ok{background:#CFF0D7} .choice.no{background:#FBD5D5}
+.progress{height:14px;border-radius:999px;background:var(--line);overflow:hidden;border:2px solid var(--ink)}
+.progress i{display:block;height:100%;background:var(--leaf);transition:width .3s}
+
+/* logic */
+.circuit{width:100%;height:auto;display:block}
+.circuit .sw{cursor:pointer}
+.circuit text{font-family:var(--font-display);font-weight:800}
+.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:14px}
+.legend div{border-radius:14px;padding:10px 12px;color:#fff;font-weight:700;font-size:14px}
+.legend b{font-family:var(--font-display);font-size:20px;display:block}
+.found{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.combo{display:flex;gap:4px;align-items:center;border:2px solid var(--ink);border-radius:12px;padding:4px 8px;background:#FFF6D6;font-weight:800;font-size:14px}
+.combo.ghosted{background:var(--sky);border-style:dashed;color:var(--ink-soft)}
+.bit{display:inline-block;min-width:54px;text-align:center;border-radius:8px;padding:1px 6px;font-size:12px;font-weight:800}
+.bit.on{background:var(--leaf);color:#fff}
+.bit.off{background:#DDE6EC;color:var(--ink-soft)}
+.tt{border-collapse:collapse;margin-top:8px;font-size:14px}
+.tt th,.tt td{border:2px solid var(--line);padding:6px 8px;text-align:center}
+.tt th{font-family:var(--font-display);font-size:16px}
+.bulb{display:inline-block;width:22px;height:22px;border-radius:50%;background:#C9D3DA;border:2px solid var(--ink);vertical-align:middle}
+.bulb.on{background:var(--sun);box-shadow:0 0 10px 3px rgba(255,198,58,.8)}
+.yn{display:flex;gap:14px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+.yn button{min-width:140px;font-size:24px}
+.story{font-size:20px;font-weight:700;line-height:1.45}
+.facts{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.fact{border:2px solid var(--ink);border-radius:12px;padding:6px 12px;font-weight:800;background:var(--sky)}
+.fact.y{background:#D7F2DE} .fact.n{background:#FBDCDC}
+.gatepill{display:inline-block;border-radius:8px;padding:0 8px;color:#fff;font-family:var(--font-display);font-weight:800}
+.opts{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
+.opts button{border:3px solid var(--ink);border-radius:14px;padding:10px 18px;color:#fff;font-family:var(--font-display);font-weight:800;font-size:22px;box-shadow:0 4px 0 var(--ink)}
+
+/* camera */
+.cam{position:relative;border-radius:18px;overflow:hidden;border:3px solid var(--ink);background:#0E2236;aspect-ratio:4/3;max-width:100%}
+.cam video{width:100%;height:100%;object-fit:cover;display:block}
+.cam video.mirror{transform:scaleX(-1)}
+.cam .box{position:absolute;left:30%;top:22%;width:40%;height:56%;border:4px dashed #fff;border-radius:16px;transition:border-color .2s}
+.cam .zones div{position:absolute;display:grid;place-items:center;color:#fff;font-size:34px;font-weight:900;background:rgba(255,255,255,.08);transition:background .15s}
+.cam .zones .zu{left:25%;right:25%;top:0;height:24%}
+.cam .zones .zd{left:25%;right:25%;bottom:0;height:24%}
+.cam .zones .zl{left:0;top:25%;bottom:25%;width:24%}
+.cam .zones .zr{right:0;top:25%;bottom:25%;width:24%}
+.cam .zones .hit{background:rgba(255,198,58,.6)}
+.cam .off{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:#fff;padding:16px;font-weight:700}
+.camnote{border-left:6px solid var(--sun);background:#FFF6D6;border-radius:10px;padding:10px 12px;font-size:14px;font-weight:600;margin-top:10px}
+.det{display:flex;align-items:center;gap:10px;margin-top:10px;font-weight:800}
+.det .sw2{width:28px;height:28px;border-radius:8px;border:2px solid var(--ink);background:#DDE6EC}
+.ring{height:8px;border-radius:999px;background:var(--line);overflow:hidden;flex:1;max-width:160px}
+.ring i{display:block;height:100%;background:var(--ink);width:0}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.tabs button{border:2px solid var(--ink);border-radius:999px;padding:6px 14px;font-weight:800;background:var(--paper)}
+.tabs button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.cardsheet{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px}
+.pcard{aspect-ratio:3/4;border-radius:16px;border:3px solid var(--ink);display:grid;place-items:center;color:#fff}
+.pcard svg{width:60%;height:auto}
+.pcard span{font-family:var(--font-display);font-weight:800;font-size:18px}
+.photo-prev{max-width:100%;border-radius:12px;border:2px solid var(--line);margin-top:10px;display:block}
+.colorpad{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.colorpad button{height:52px;border-radius:12px;border:3px solid var(--ink);font-weight:800;color:#fff}
+
+@media (max-width:820px){
+  .hero{grid-template-columns:1fr}
+  .stage{grid-template-columns:1fr}
+  .ghead h2{font-size:26px}
+  .cmd{width:58px;height:58px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media print{.top,.noprint{display:none!important} .pcard{break-inside:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style>
+
+<header class="top"><div class="in">
+  <button class="logo" id="homeBtn" aria-label="Ana sayfa"><span class="mark">{ }</span><span>Kod Kaşifleri<small>Algoritma · Mantık · Kamera</small></span></button>
+  <div class="sp"></div>
+  <button class="icon-btn" id="soundBtn" aria-label="Sesi aç/kapat" title="Ses">🔊</button>
+</div></header>
+<main class="wrap" id="app"></main>
+<script>
+"use strict";
+/* ============ helpers ============ */
+const $app = document.getElementById('app');
+function h(tag, attrs, ...kids){
+  const el = document.createElement(tag);
+  if (attrs) for (const k in attrs){
+    const v = attrs[k];
+    if (v == null || v === false) continue;
+    if (k === 'class') el.className = v;
+    else if (k === 'style') el.style.cssText = v;
+    else if (k.startsWith('on')) el.addEventListener(k.slice(2), v);
+    else if (k === 'html') el.innerHTML = v;
+    else el.setAttribute(k, v === true ? '' : v);
+  }
+  for (const c of kids.flat()){
+    if (c == null || c === false) continue;
+    el.append(c.nodeType ? c : document.createTextNode(String(c)));
+  }
+  return el;
+}
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const store = {
+  get(k, d){ try { const v = localStorage.getItem('kk_' + k); return v == null ? d : JSON.parse(v); } catch(e){ return d; } },
+  set(k, v){ try { localStorage.setItem('kk_' + k, JSON.stringify(v)); } catch(e){} }
+};
+let stars = store.get('stars', {});
+function setStars(key, n){ if ((stars[key] || 0) < n){ stars[key] = n; store.set('stars', stars); } }
+function starStr(n, max = 3){ return '★'.repeat(n) + '☆'.repeat(max - n); }
+
+/* ============ sound & speech ============ */
+let soundOn = store.get('sound', true);
+let actx = null;
+function tone(freq, dur = .12, type = 'sine', vol = .15, delay = 0){
+  if (!soundOn) return;
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    const t = actx.currentTime + delay, o = actx.createOscillator(), g = actx.createGain();
+    o.type = type; o.frequency.value = freq; g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.001, t + dur);
+    o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t + dur + .02);
+  } catch(e){}
+}
+const sfx = {
+  step(){ tone(520, .08, 'triangle', .12); },
+  add(){ tone(700, .06, 'square', .06); },
+  bump(){ tone(140, .25, 'sawtooth', .12); },
+  coin(){ tone(880, .08, 'square', .08); tone(1320, .12, 'square', .08, .08); },
+  win(){ [523, 659, 784, 1046].forEach((f, i) => tone(f, .18, 'triangle', .14, i * .11)); },
+  no(){ tone(260, .15, 'triangle', .12); tone(200, .2, 'triangle', .12, .12); },
+  ok(){ tone(660, .1, 'triangle', .12); tone(990, .14, 'triangle', .12, .09); }
+};
+function say(text){
+  try {
+    if (!('speechSynthesis' in window)) return;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text.replace(/[^\p{L}\p{N}\s.,!?'’-]/gu, ' '));
+    u.lang = 'tr-TR'; u.rate = .95;
+    const v = speechSynthesis.getVoices().find(v => v.lang && v.lang.toLowerCase().startsWith('tr'));
+    if (v) u.voice = v;
+    speechSynthesis.speak(u);
+  } catch(e){}
+}
+const soundBtn = document.getElementById('soundBtn');
+function paintSound(){ soundBtn.textContent = soundOn ? '🔊' : '🔇'; }
+soundBtn.onclick = () => { soundOn = !soundOn; store.set('sound', soundOn); paintSound(); if (soundOn) sfx.ok(); };
+paintSound();
+
+/* ============ arrows ============ */
+const DIRS = { U:[0,-1], D:[0,1], L:[-1,0], R:[1,0] };
+const DIR_NAME = { U:'Yukarı', D:'Aşağı', L:'Sola', R:'Sağa' };
+const DIR_COLOR = { U:'Yeşil', D:'Kırmızı', L:'Mavi', R:'Sarı' };
+function arrowSvg(d){
+  const rot = { U:0, R:90, D:180, L:270 }[d];
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 24 24'); svg.setAttribute('aria-hidden', 'true');
+  svg.innerHTML = `<g transform="rotate(${rot} 12 12)"><path d="M12 3 L21 12 H15.5 V21 H8.5 V12 H3 Z" fill="currentColor" stroke="#16324F" stroke-width="1.4" stroke-linejoin="round"/></g>`;
+  return svg;
+}
+
+/* ============ levels (map legend: S start, G yuva, * fındık, # taş, ~ su, . çimen) ============ */
+const HZ_LEVELS = [
+  { name:'İlk Adım', map:['.....','S...G','.....'], tip:"Fıstık'ı yuvasına götür! Okları sırayla seç, sonra Çalıştır'a bas." },
+  { name:'Köşeyi Dön', map:['S..~','~~.~','~~.~','~~.G'], tip:'Yol bir yerde dönüyor. Önce sağa, sonra aşağı!' },
+  { name:'Taşlara Dikkat', map:['S.#..','.##.#','....G'], tip:'Taşlara çarparsan Fıstık durur. Etrafından dolaş.' },
+  { name:'Fındık Topla', map:['S..*.','~~~.~','G....'], tip:'Önce fındığı topla, sonra yuvaya dön.' },
+  { name:'Zikzak', map:['S.~~~','~..~~','~~..~','~~~.G'], tip:'Sağ, aşağı, sağ, aşağı… Bir düzen görüyor musun?' },
+  { name:'Labirent', map:['S.#..','#.#.#','#...#','###..','###.G'], tip:'Bu yolda çıkmaz sokak var. Dikkatli planla!' },
+  { name:'Tekrarla!', map:['S......G'], loops:true, par:2, tip:'Aynı oku 7 kere koymak yerine 🔁 Tekrarla bloğunu kullan. En fazla 2 blokla yapabilir misin?' },
+  { name:'Merdiven', map:['S.~~~','~..~~','~~..~','~~~..','~~~~G'], loops:true, par:3, tip:'Merdivende hep aynı iki adım tekrar ediyor. Tekrarla bloğunun içine iki ok koy!' },
+  { name:'Büyük L', map:['S~~~~','.~~~~','.~~~~','.~~~~','....G'], loops:true, par:4, tip:'İki ayrı Tekrarla bloğu kullan: biri aşağı, biri sağa.' },
+  { name:'Ada Turu', map:['S..*','G~~.','.~~.','*...'], loops:true, par:8, tip:'Adanın etrafında dön, iki fındığı da topla ve yuvaya gel.' },
+  { name:'Dev Merdiven', map:['S..~~','~~.~~','~~...','~~~~.','~~~~G'], loops:true, par:5, tip:'Bu merdivenin basamakları daha büyük. Tekrar eden parçayı bul.' },
+  { name:'Büyük Macera', map:['S.~~~~','~..*~~','~~~.~~','~~~..~','~~~~.G'], loops:true, tip:'Son görev! Fındığı al ve yuvaya ulaş.' }
+];
+const BUG_LEVELS = [
+  { lv:0, prog:'RRDR', fix:'RRRR', tip:'Fıstık yolda kayboldu. Hangi ok yanlış? Yanlış oka dokunarak değiştir.' },
+  { lv:1, prog:'RRDLDR', fix:'RRDDDR', tip:'Bir ok ters dönmüş. Bul ve düzelt!' },
+  { lv:2, prog:'DRRRRR', fix:'DDRRRR', tip:'Fıstık taşa çarpıyor. Hangi adım hatalı?' },
+  { lv:4, prog:'RDDRRDR', fix:'RDRDRDR', tip:'Zikzak bozulmuş. Düzeni hatırla: sağ, aşağı, sağ, aşağı…' },
+  { lv:3, prog:'RRDDDLLL', fix:'RRRDDLLL', tip:'Fıstık suya düşüyor! Programdaki hatayı bul.' },
+  { lv:7, prog:'RDRRDDRD', fix:'RDRDRDRD', tip:'Merdivende iki basamak karışmış. İki hatayı da bul.' }
+];
+const CAM_LEVELS = [0, 1, 2, 3, 4, 7];
+
+/* ============ Board ============ */
+class Board {
+  constructor(map){
+    this.map = map; this.h = map.length; this.w = map[0].length;
+    this.wrap = h('div', { class:'boardwrap' });
+    this.el = h('div', { class:'board', style:`--w:${this.w};grid-template-columns:repeat(${this.w},1fr);max-width:${this.w * 76}px` });
+    this.cells = []; this.acorns = [];
+    for (let y = 0; y < this.h; y++) for (let x = 0; x < this.w; x++){
+      const c = map[y][x];
+      const cls = c === '~' ? 'w' : 'g' + ((x + y) % 2 ? ' alt' : '') + (c === 'S' ? ' s' : '');
+      const cell = h('div', { class:'cell ' + cls });
+      if (c === '#') cell.append(h('span', { class:'e' }, '🪨'));
+      if (c === 'G') cell.append(h('span', { class:'e' }, '🌳'));
+      if (c === '*'){ const e = h('span', { class:'e' }, '🌰'); cell.append(e); this.acorns.push({ x, y, e }); }
+      if (c === 'S') this.start = [x, y];
+      if (c === 'G') this.goal = [x, y];
+      this.el.append(cell);
+    }
+    this.sprite = h('div', { class:'hero-sprite', style:`width:${100 / this.w}%;height:${100 / this.h}%` }, h('span', { class:'e' }, '🐿️'));
+    this.el.append(this.sprite);
+    this.wrap.append(this.el);
+    this.reset();
+  }
+  reset(){
+    this.pos = this.start.slice(); this.got = new Set(); this.won = false;
+    this.acorns.forEach(a => a.e.classList.remove('got'));
+    this.sprite.classList.remove('win', 'bump');
+    this.place();
+  }
+  place(){
+    // account for the 4px grid gap
+    const [x, y] = this.pos, gapX = 4 * (this.w - 1) / this.w, gapY = 4 * (this.h - 1) / this.h;
+    this.sprite.style.left = `calc(${x * 100 / this.w}% + ${x * 4 - x * gapX}px)`;
+    this.sprite.style.top = `calc(${y * 100 / this.h}% + ${y * 4 - y * gapY}px)`;
+    this.sprite.style.width = `calc(${100 / this.w}% - ${gapX}px)`;
+    this.sprite.style.height = `calc(${100 / this.h}% - ${gapY}px)`;
+  }
+  tile(x, y){ return (y < 0 || y >= this.h || x < 0 || x >= this.w) ? null : this.map[y][x]; }
+  allGot(){ return this.got.size === this.acorns.length; }
+  async step(d){
+    const [dx, dy] = DIRS[d], nx = this.pos[0] + dx, ny = this.pos[1] + dy, t = this.tile(nx, ny);
+    const e = this.sprite.querySelector('.e');
+    if (d === 'L') e.style.transform = 'scaleX(-1)'; else if (d === 'R') e.style.transform = '';
+    if (t == null || t === '#' || t === '~'){
+      this.sprite.style.setProperty('--bx', dx * 30 + '%'); this.sprite.style.setProperty('--by', dy * 30 + '%');
+      this.sprite.classList.remove('bump'); void this.sprite.offsetWidth; this.sprite.classList.add('bump');
+      sfx.bump(); await sleep(380);
+      return t === '~' ? 'water' : t === '#' ? 'rock' : 'edge';
+    }
+    this.pos = [nx, ny]; this.place(); sfx.step();
+    await sleep(330);
+    const a = this.acorns.find(a => a.x === nx && a.y === ny);
+    if (a && !this.got.has(a)){ this.got.add(a); a.e.classList.add('got'); sfx.coin(); }
+    if (t === 'G' && this.allGot()){ this.won = true; this.sprite.classList.add('win'); sfx.win(); return 'win'; }
+    return 'ok';
+  }
+}
+/* shortest path including acorns (BFS over position + collected mask) */
+function shortest(map){
+  const H = map.length, W = map[0].length, ac = []; let s, g;
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++){ const c = map[y][x]; if (c === 'S') s = [x, y]; if (c === 'G') g = [x, y]; if (c === '*') ac.push(x + ',' + y); }
+  const full = (1 << ac.length) - 1, seen = new Set(), q = [[s[0], s[1], 0, 0]];
+  seen.add(s + ',0');
+  while (q.length){
+    const [x, y, m, d] = q.shift();
+    if (x === g[0] && y === g[1] && m === full) return d;
+    for (const k in DIRS){
+      const nx = x + DIRS[k][0], ny = y + DIRS[k][1];
+      if (ny < 0 || ny >= H || nx < 0 || nx >= W) continue;
+      const c = map[ny][nx]; if (c === '#' || c === '~') continue;
+      let nm = m; const ai = ac.indexOf(nx + ',' + ny); if (ai >= 0) nm |= 1 << ai;
+      if (x === g[0] && y === g[1] && m === full) continue;
+      const key = nx + ',' + ny + ',' + nm; if (seen.has(key)) continue; seen.add(key);
+      q.push([nx, ny, nm, d + 1]);
+    }
+  }
+  return -1;
+}
+const FAIL_TEXT = {
+  water:'Hop! Fıstık suya düşecekti. Programı düzelt.',
+  rock:'Bom! Fıstık taşa çarptı. Programı düzelt.',
+  edge:'Fıstık haritanın dışına çıkamaz. Programı düzelt.',
+  short:'Program bitti ama Fıstık yuvaya ulaşamadı. Biraz daha ok ekle.',
+  acorn:'Yuvaya varmadan önce tüm fındıkları toplamalısın!'
+};
+
+/* ============ modal ============ */
+function modal({ icon = '🎉', title, text, starsN, buttons }){
+  const ov = h('div', { class:'overlay', role:'dialog', 'aria-modal':'true' });
+  const st = starsN != null ? h('div', { class:'st' }, ...[0, 1, 2].map(i => h('span', { class:i < starsN ? '' : 'off' }, '★'))) : null;
+  const row = h('div', { class:'row' });
+  const close = () => ov.remove();
+  buttons.forEach(b => row.append(h('button', { class:b.primary ? 'go' : 'ghost', onclick:() => { close(); b.on && b.on(); } }, b.label)));
+  ov.append(h('div', { class:'modal' }, h('div', { class:'big' }, icon), h('h3', null, title), st, text ? h('p', { class:'muted' }, text) : null, row));
+  document.body.append(ov);
+  setTimeout(() => row.querySelector('button')?.focus(), 50);
+  return close;
+}
+
+/* ============ router ============ */
+let cleanup = null, runToken = 0;
+const SCREENS = {};
+function go(name, arg){
+  if (cleanup){ try { cleanup(); } catch(e){} cleanup = null; }
+  runToken++;
+  try { speechSynthesis.cancel(); } catch(e){}
+  document.querySelectorAll('.overlay').forEach(o => o.remove());
+  $app.innerHTML = '';
+  (SCREENS[name] || SCREENS.home)(arg);
+  window.scrollTo(0, 0);
+  try { history.replaceState(null, '', name === 'home' ? location.pathname : '#' + name); } catch(e){}
+}
+document.getElementById('homeBtn').onclick = () => go('home');
+
+function gameHead(title, sub, onBack, speakText){
+  const head = h('div', { class:'ghead' },
+    h('button', { class:'pill-btn', onclick:onBack }, '← Geri'),
+    h('h2', null, title), sub ? h('span', { class:'lv' }, sub) : null, h('div', { class:'sp' }));
+  return head;
+}
+function taskBar(text){
+  return h('div', { class:'task' }, h('button', { class:'icon-btn say', 'aria-label':'Sesli oku', title:'Sesli oku', onclick:() => say(text) }, '🗣️'), h('span', null, text));
+}
+function levelSelect(gameKey, title, intro, list, onPick){
+  $app.append(gameHead(title, null, () => go('home')));
+  $app.append(h('p', { class:'muted', style:'margin:0 0 16px;max-width:65ch' }, intro));
+  const grid = h('div', { class:'levels' });
+  list.forEach((name, i) => {
+    const s = stars[gameKey + '-' + i] || 0;
+    grid.append(h('button', { class:'lvbtn' + (s ? '' : ' new'), onclick:() => onPick(i) }, h('b', null, i + 1), h('span', null, name), h('i', null, starStr(s))));
+  });
+  $app.append(grid);
+}
+/* ============ program editor (Hazine Avı) ============ */
+function countBlocks(prog){ return prog.reduce((n, it) => n + (it.t === 'loop' ? 1 + it.body.length : 1), 0); }
+function flatten(prog){
+  const out = [];
+  prog.forEach((it, i) => {
+    if (it.t === 'loop'){ for (let k = 0; k < it.n; k++) it.body.forEach((d, j) => out.push({ d, path:i + '.' + j })); }
+    else out.push({ d:it.d, path:String(i) });
+  });
+  return out;
+}
+function chip(d, attrs){ const c = h('button', Object.assign({ class:'chip ' + d, 'aria-label':DIR_NAME[d] }, attrs || {})); c.append(arrowSvg(d)); return c; }
+function cmdBtn(d, on){ const b = h('button', { class:'cmd ' + d, 'aria-label':DIR_NAME[d] + ' ekle', title:DIR_NAME[d], onclick:on }); b.append(arrowSvg(d)); return b; }
+
+async function runProgram(board, steps, highlight){
+  const my = ++runToken;
+  board.reset(); await sleep(250);
+  for (let i = 0; i < steps.length; i++){
+    if (my !== runToken) return { res:'abort' };
+    highlight(steps[i].path);
+    const r = await board.step(steps[i].d);
+    if (my !== runToken) return { res:'abort' };
+    if (r === 'win') return { res:'win' };
+    if (r !== 'ok') return { res:r, at:steps[i].path };
+  }
+  highlight(null);
+  const atGoal = board.pos[0] === board.goal[0] && board.pos[1] === board.goal[1];
+  return { res:atGoal ? 'acorn' : 'short' };
+}
+
+/* ============ HOME ============ */
+const GAMES = {
+  algo:[
+    { id:'hazine', ico:'🐿️', bg:'#DDF2CF', name:'Hazine Avı', desc:"Okları sıraya diz, Fıstık'ı yuvasına götür. 12 bölüm, döngüler dahil.", learn:'Sıralama, algoritma kurma, döngü (tekrarla)', count:HZ_LEVELS.length },
+    { id:'hata', ico:'🐞', bg:'#FDE2DC', name:'Hata Avcısı', desc:'Hazır programda bir şeyler ters gidiyor. Hatayı bul ve düzelt.', learn:'Hata ayıklama (debugging), programı okuma', count:BUG_LEVELS.length },
+    { id:'asci', ico:'🤖', bg:'#E3EEFF', name:'Robot Aşçı', desc:'Robot her şeyi sırayla yapar. Adımları doğru sıraya koy.', learn:'Algoritma = adım sırası, bilgisayarsız ısınma', count:5 },
+    { id:'oruntu', ico:'🧩', bg:'#FFF1C7', name:'Örüntü Bulmaca', desc:'Sıradaki ne? Düzeni bul, boşluğu doldur.', learn:'Örüntü tanıma, tahmin etme', count:1 }
+  ],
+  logic:[
+    { id:'lamba', ico:'💡', bg:'#FFF1C7', name:'Lambayı Yak', desc:'Anahtarları aç, kapat. Lambayı yakan bütün yolları keşfet.', learn:'VE, VEYA, DEĞİL kapıları; doğruluk tablosu', count:8 },
+    { id:'bekci', ico:'🏰', bg:'#ECE6FF', name:'Kapı Bekçisi', desc:'Kale kapısı açılır mı? Hikâyeyi oku, mantıkla karar ver.', learn:'Mantık kapılarını günlük hayatla ilişkilendirme', count:1 },
+    { id:'devre', ico:'🔌', bg:'#DDF0FA', name:'Devre Ustası', desc:'Tabloya bak, eksik kapıyı bul ve devreyi tamamla.', learn:'Doğruluk tablosu okuma, devre tasarlama', count:6 }
+  ],
+  cam:[
+    { id:'kart', ico:'🃏', bg:'#DDF2CF', name:'Kartlarla Kodlama', desc:'Renkli ok kartlarını kameraya göster ya da fotoğrafını çek. Program kartlardan oluşur.', learn:'Somut (dokunulabilir) kodlama, görüntü işleme', count:CAM_LEVELS.length },
+    { id:'renk', ico:'🎨', bg:'#FDE2DC', name:'Renk Avı', desc:"Kameraya renkli bir şey göster, Fıstık o yöne gitsin.", learn:'Renk algılama, girdi → çıktı ilişkisi', count:CAM_LEVELS.length },
+    { id:'hareket', ico:'🙌', bg:'#E3EEFF', name:'Hareketle Yönlendir', desc:'Elini ekranın bir köşesinde salla, Fıstık o tarafa gitsin.', learn:'Hareket algılama, sensör mantığı', count:CAM_LEVELS.length }
+  ]
+};
+const TAGS = { hazine:'Sıralama · Döngü', hata:'Hata ayıklama', asci:'Algoritma', oruntu:'Örüntü', lamba:'Mantık kapıları', bekci:'Mantık', devre:'Doğruluk tablosu', kart:'Somut kodlama', renk:'Renk algılama', hareket:'Hareket algılama' };
+function gameStars(id){
+  let n = 0;
+  for (const k in stars) if (k.startsWith(id + '-')) n += stars[k];
+  return n;
+}
+SCREENS.home = () => {
+  const mini = h('div', { class:'mini' });
+  const pic = ['🐿️','g','g','w','w','w','w','p','🪨','g','w','w','w','g','p','🌰','g','w','w','w','w','p','g','w','w','w','w','g','p','g','w','w','w','w','w','🌳'];
+  pic.forEach(c => mini.append(h('i', { class:c === 'w' ? 'w' : c === 'p' ? 'p' : '' }, c.length > 1 ? c : '')));
+  $app.append(h('section', { class:'hero' },
+    h('div', null,
+      h('h1', null, 'Kodla, ', h('span', null, 'keşfet'), ', eğlen!'),
+      h('p', null, 'İlkokul öğrencileri için oyunlarla algoritmik düşünme: okları sıraya diz, lambaları mantıkla yak, kamerayla kod yaz.')),
+    h('div', { class:'map', 'aria-hidden':'true' }, mini)));
+  const zones = [
+    { key:'algo', title:'Algoritma Adası', tag:'Sıralama · Döngü', color:'var(--leaf)', text:'Bir işi adım adım planlamayı öğren.' },
+    { key:'logic', title:'Mantık Atölyesi', tag:'VE · VEYA · DEĞİL', color:'var(--plum)', text:'Bilgisayarların karar verirken kullandığı mantık kapıları.' },
+    { key:'cam', title:'Kamera Laboratuvarı', tag:'Görüntü işleme', color:'var(--coral)', text:'Bilgisayar renkleri ve hareketleri nasıl görür? Kamera ile oyna.' }
+  ];
+  zones.forEach(z => {
+    const cards = h('div', { class:'cards' });
+    GAMES[z.key].forEach(g => {
+      const s = gameStars(g.id), max = g.count * 3;
+      cards.append(h('button', { class:'gcard', onclick:() => go(g.id) },
+        h('div', { class:'ico', style:'background:' + g.bg }, g.ico), h('h3', null, g.name), h('p', null, g.desc),
+        h('div', { class:'meta' }, h('span', null, TAGS[g.id]), h('span', { class:'stars' }, max > 3 ? `★ ${s}/${max}` : s ? '★ ' + s : ''))));
+    });
+    $app.append(h('section', { class:'zone' },
+      h('div', { class:'zone-head' }, h('h2', null, z.title), h('span', { class:'tag', style:'background:' + z.color }, z.tag), h('p', null, z.text)), cards));
+  });
+  const tb = h('tbody');
+  [...GAMES.algo, ...GAMES.logic, ...GAMES.cam].forEach(g => tb.append(h('tr', null, h('td', null, h('b', null, g.name)), h('td', null, g.learn), h('td', null, g.desc))));
+  $app.append(h('details', { class:'teacher' }, h('summary', null, 'Öğretmen ve veli için'),
+    h('p', { class:'muted small' }, 'Önerilen sıra: Robot Aşçı ile ısınma (bilgisayarsız da yapılabilir) → Hazine Avı → Hata Avcısı → Mantık Atölyesi → Kamera Laboratuvarı. Her oturum 40 dakika. Kamera görüntüsü yalnızca cihazda anlık işlenir; kaydedilmez ve hiçbir yere gönderilmez. İlerleme (yıldızlar) sadece bu tarayıcıda saklanır.'),
+    h('div', { class:'tablebox' }, h('table', null, h('thead', null, h('tr', null, h('th', null, 'Oyun'), h('th', null, 'Kazanım'), h('th', null, 'Ne yapılıyor'))), tb))));
+};
+
+/* ============ HAZİNE AVI ============ */
+SCREENS.hazine = (lvArg) => {
+  if (lvArg == null){
+    levelSelect('hazine', 'Hazine Avı', "Fıstık acıktı! Okları sıraya dizerek onu fındıklara ve yuvasına götür. 7. bölümden sonra Tekrarla bloğu açılıyor.", HZ_LEVELS.map(l => l.name), i => go('hazine', i));
+    return;
+  }
+  const L = HZ_LEVELS[lvArg], board = new Board(L.map);
+  const par = L.par || shortest(L.map);
+  let prog = [], openLoop = -1, running = false;
+  $app.append(gameHead('Hazine Avı', `Bölüm ${lvArg + 1}: ${L.name}`, () => go('hazine')));
+  $app.append(taskBar(L.tip));
+  const progEl = h('div', { class:'prog', 'data-empty':'Programın burada görünecek. Yukarıdaki oklara dokun.' });
+  const counter = h('div', { class:'counter' });
+  const msg = h('div', { class:'msg', role:'status' });
+  const runBtn = h('button', { class:'go', onclick:run }, '▶ Çalıştır');
+  function add(d){
+    if (running) return;
+    if (openLoop >= 0) prog[openLoop].body.push(d); else prog.push({ t:'dir', d });
+    sfx.add(); render();
+  }
+  function addLoop(){
+    if (running || openLoop >= 0) return;
+    prog.push({ t:'loop', n:2, body:[] }); openLoop = prog.length - 1; sfx.add(); render();
+  }
+  function render(){
+    progEl.innerHTML = '';
+    prog.forEach((it, i) => {
+      if (it.t === 'dir') progEl.append(chip(it.d, { 'data-path':String(i), title:'Silmek için dokun', onclick:() => { if (running) return; prog.splice(i, 1); if (openLoop > i) openLoop--; render(); } }));
+      else {
+        const body = h('div', { class:'lb' });
+        it.body.forEach((d, j) => body.append(chip(d, { 'data-path':i + '.' + j, title:'Silmek için dokun', onclick:() => { if (running) return; it.body.splice(j, 1); render(); } })));
+        progEl.append(h('div', { class:'loopbox' + (openLoop === i ? ' open' : '') },
+          h('span', { class:'lh' }, '🔁', h('button', { class:'cnt', title:'Kaç kere? Dokunarak değiştir', 'aria-label':`${it.n} kere tekrarla, değiştirmek için dokun`, onclick:() => { if (running) return; it.n = it.n >= 9 ? 2 : it.n + 1; render(); } }, '×' + it.n)),
+          body,
+          openLoop === i ? h('button', { class:'done', onclick:() => { openLoop = -1; render(); } }, 'Bitti') : h('button', { class:'x', 'aria-label':'Döngüyü sil', onclick:() => { if (running) return; prog.splice(i, 1); if (openLoop > i) openLoop--; render(); } }, '×')));
+      }
+    });
+    const n = countBlocks(prog);
+    counter.innerHTML = '';
+    counter.append('Blok sayısı: ', h('b', null, n), L.loops ? `  ·  Hedef: en fazla ${par} blok` : `  ·  En kısa yol: ${par} adım`);
+    runBtn.disabled = !prog.length;
+  }
+  function highlight(path){ progEl.querySelectorAll('.chip').forEach(c => c.classList.toggle('now', c.dataset.path === path)); }
+  async function run(){
+    if (running || !prog.length) return;
+    running = true; openLoop = -1; render(); msg.textContent = ''; msg.className = 'msg';
+    const r = await runProgram(board, flatten(prog), highlight);
+    running = false;
+    if (r.res === 'abort') return;
+    if (r.res === 'win'){
+      const n = countBlocks(prog), s = n <= par ? 3 : n <= par + 2 ? 2 : 1;
+      setStars('hazine-' + lvArg, s);
+      const last = lvArg === HZ_LEVELS.length - 1;
+      modal({ title:'Harika!', starsN:s, text:s === 3 ? 'Mükemmel bir program!' : L.loops ? `${n} blok kullandın. Tekrarla ile ${par} bloğa indirebilir misin?` : `${n} adım kullandın. En kısa yol ${par} adım.`,
+        buttons:[ last ? { label:'Bölümler', primary:true, on:() => go('hazine') } : { label:'Sonraki bölüm →', primary:true, on:() => go('hazine', lvArg + 1) }, { label:'Tekrar dene', on:() => board.reset() } ] });
+    } else {
+      msg.className = 'msg bad'; msg.textContent = FAIL_TEXT[r.res];
+      if (r.at) progEl.querySelector(`[data-path="${r.at}"]`)?.classList.add('bad');
+      sfx.no();
+    }
+  }
+  const pal = h('div', { class:'palette' }, ...['L','U','D','R'].map(d => cmdBtn(d, () => add(d))));
+  if (L.loops) pal.append(h('button', { class:'cmd loop', onclick:addLoop, title:'Tekrarla bloğu ekle' }, '🔁 Tekrarla'));
+  const right = h('div', { class:'panel' }, h('h3', null, 'Komutlar'), pal, progEl, counter,
+    h('div', { class:'row', style:'margin-top:12px' }, runBtn,
+      h('button', { class:'ghost', onclick:() => { if (running) return; if (openLoop >= 0 && prog[openLoop].body.length) prog[openLoop].body.pop(); else { prog.pop(); openLoop = -1; } render(); } }, '⌫ Geri al'),
+      h('button', { class:'ghost', onclick:() => { runToken++; running = false; prog = []; openLoop = -1; board.reset(); msg.textContent = ''; render(); } }, 'Temizle')), msg);
+  $app.append(h('div', { class:'stage' }, board.wrap, right));
+  const keys = e => { const m = { ArrowUp:'U', ArrowDown:'D', ArrowLeft:'L', ArrowRight:'R' }[e.key]; if (m && !e.target.closest('input')){ e.preventDefault(); add(m); } else if (e.key === 'Enter' && e.target === document.body) run(); };
+  document.addEventListener('keydown', keys); cleanup = () => document.removeEventListener('keydown', keys);
+  render();
+};
+
+/* ============ HATA AVCISI ============ */
+SCREENS.hata = (lvArg) => {
+  if (lvArg == null){
+    levelSelect('hata', 'Hata Avcısı', 'Programcılar da hata yapar! Önce programı çalıştır ve izle. Sonra yanlış oka dokunarak yönünü değiştir.', BUG_LEVELS.map((b, i) => HZ_LEVELS[b.lv].name), i => go('hata', i));
+    return;
+  }
+  const B = BUG_LEVELS[lvArg], L = HZ_LEVELS[B.lv], board = new Board(L.map);
+  const bugs = [...B.prog].filter((c, i) => c !== B.fix[i]).length;
+  let prog = [...B.prog], changes = 0, running = false;
+  const order = ['U', 'R', 'D', 'L'];
+  $app.append(gameHead('Hata Avcısı', `Görev ${lvArg + 1}`, () => go('hata')));
+  $app.append(taskBar(B.tip));
+  const progEl = h('div', { class:'prog' });
+  const msg = h('div', { class:'msg', role:'status' });
+  const counter = h('div', { class:'counter' });
+  function render(){
+    progEl.innerHTML = '';
+    prog.forEach((d, i) => progEl.append(chip(d, { 'data-path':String(i), title:'Yönü değiştirmek için dokun', onclick:() => { if (running) return; prog[i] = order[(order.indexOf(d) + 1) % 4]; changes++; sfx.add(); render(); } })));
+    counter.innerHTML = ''; counter.append('Bu programda ', h('b', null, bugs), bugs > 1 ? ' hata var.' : ' hata var.', '  Değişiklik: ', h('b', null, changes));
+  }
+  function highlight(path){ progEl.querySelectorAll('.chip').forEach(c => c.classList.toggle('now', c.dataset.path === path)); }
+  async function run(){
+    if (running) return; running = true; msg.textContent = ''; msg.className = 'msg';
+    const r = await runProgram(board, prog.map((d, i) => ({ d, path:String(i) })), highlight);
+    running = false;
+    if (r.res === 'abort') return;
+    if (r.res === 'win'){
+      const s = changes <= bugs ? 3 : changes <= bugs + 3 ? 2 : 1;
+      setStars('hata-' + lvArg, s);
+      const last = lvArg === BUG_LEVELS.length - 1;
+      modal({ icon:'🐞', title:'Hata bulundu!', starsN:s, text:s === 3 ? 'Tam bir hata avcısısın.' : 'Program çalışıyor! Daha az değişiklikle de yapılabilirdi.',
+        buttons:[ last ? { label:'Görevler', primary:true, on:() => go('hata') } : { label:'Sonraki görev →', primary:true, on:() => go('hata', lvArg + 1) } ] });
+    } else {
+      msg.className = 'msg bad'; msg.textContent = FAIL_TEXT[r.res] + (r.at ? ' Kırmızı yanıp sönen adıma bak.' : '');
+      if (r.at) progEl.querySelector(`[data-path="${r.at}"]`)?.classList.add('bad');
+      sfx.no();
+    }
+  }
+  const right = h('div', { class:'panel' }, h('h3', null, 'Hatalı program'),
+    h('p', { class:'muted small', style:'margin:0' }, 'Bir oka dokununca yönü değişir: yukarı → sağ → aşağı → sol.'),
+    progEl, counter,
+    h('div', { class:'row', style:'margin-top:12px' }, h('button', { class:'go', onclick:run }, '▶ Çalıştır'),
+      h('button', { class:'ghost', onclick:() => { runToken++; running = false; prog = [...B.prog]; changes = 0; board.reset(); msg.textContent = ''; render(); } }, 'Baştan başla')), msg);
+  $app.append(h('div', { class:'stage' }, board.wrap, right));
+  render();
+};
+/* ============ ROBOT AŞÇI ============ */
+const CHEF = [
+  { name:'Diş Fırçalama', ico:'🪥', steps:[['🪥','Fırçayı ve macunu al'],['🧴','Fırçaya biraz macun sık'],['😁','Dişlerini 2 dakika fırçala'],['💧','Ağzını suyla çalkala'],['🧼','Fırçayı yıka ve yerine koy']] },
+  { name:'Fidan Dikme', ico:'🌱', steps:[['⛏️','Toprağa bir çukur kaz'],['🌱','Fidanı çukura yerleştir'],['🟫','Çukuru toprakla kapat'],['🚿','Fidanı bol suyla sula']] },
+  { name:'Sandviç Hazırlama', ico:'🥪', steps:[['🧼','Ellerini yıka'],['🍞','İki dilim ekmek al'],['🧀','Bir dilimin üstüne peynir koy'],['🍅','Peynirin üstüne domates koy'],['🥪','Diğer dilimi üstüne kapat']] },
+  { name:'Okula Hazırlanma', ico:'🎒', steps:[['⏰','Uyan ve yataktan kalk'],['🚿','Yüzünü yıka'],['👕','Kıyafetlerini giy'],['🥣','Kahvaltını yap'],['🎒','Çantanı al ve okula git']] },
+  { name:'Kek Yapma', ico:'🧁', steps:[['🥚','Malzemeleri hazırla'],['🥣','Yumurta, şeker ve unu karıştır'],['🫙','Karışımı kalıba dök'],['🔥','Fırında 30 dakika pişir'],['🍰','Soğuyunca dilimle ve paylaş']] }
+];
+SCREENS.asci = (lvArg) => {
+  if (lvArg == null){
+    levelSelect('asci', 'Robot Aşçı', 'Robotlar ne yapacaklarını bilmez; ona adımları doğru sırayla söylemeliyiz. Buna algoritma denir. Bu oyunu sınıfta kâğıt kartlarla bilgisayarsız da oynayabilirsiniz.', CHEF.map(c => c.ico + ' ' + c.name), i => go('asci', i));
+    return;
+  }
+  const C = CHEF[lvArg], n = C.steps.length;
+  let placed = Array(n).fill(null), tries = 0;
+  const pool = shuffle(C.steps.map((s, i) => i));
+  if (pool.every((v, i) => v === i)) pool.reverse();
+  $app.append(gameHead('Robot Aşçı', `${C.ico} ${C.name}`, () => go('asci')));
+  $app.append(taskBar(`Robot ${C.name.toLowerCase()} işini yapacak. Aşağıdaki adımlara sırayla dokun ve robota doğru sırayı öğret.`));
+  const left = h('div', { class:'steps' }), right = h('div', { class:'steps' });
+  const msg = h('div', { class:'msg', role:'status' });
+  function render(check){
+    left.innerHTML = ''; right.innerHTML = '';
+    pool.forEach(i => left.append(h('button', { class:'step' + (placed.includes(i) ? ' used' : ''), onclick:() => { const k = placed.indexOf(null); if (k < 0) return; placed[k] = i; sfx.add(); render(); } }, h('span', { class:'em' }, C.steps[i][0]), C.steps[i][1])));
+    placed.forEach((i, k) => {
+      const cls = 'slot' + (i != null ? ' filled' : '') + (check && i != null ? (i === k ? ' ok' : ' no') : '');
+      right.append(h('button', { class:cls, title:i != null ? 'Geri almak için dokun' : '', onclick:() => { if (i == null) return; placed[k] = null; render(); } },
+        h('span', { class:'n' }, k + 1), i != null ? h('span', { class:'em', style:'font-size:28px' }, C.steps[i][0]) : null, i != null ? C.steps[i][1] : h('span', { class:'muted' }, '…')));
+    });
+  }
+  async function check(){
+    if (placed.includes(null)){ msg.className = 'msg bad'; msg.textContent = 'Önce bütün adımları yerleştir.'; return; }
+    tries++;
+    render(true);
+    const ok = placed.every((v, k) => v === k);
+    if (ok){
+      const s = tries === 1 ? 3 : tries === 2 ? 2 : 1;
+      setStars('asci-' + lvArg, s); sfx.win();
+      await sleep(500);
+      modal({ icon:'🤖', title:'Robot başardı!', starsN:s, text:'Adımlar doğru sırada. İşte bir algoritma!',
+        buttons:[ lvArg < CHEF.length - 1 ? { label:'Sonraki görev →', primary:true, on:() => go('asci', lvArg + 1) } : { label:'Görevler', primary:true, on:() => go('asci') } ] });
+    } else {
+      sfx.no(); msg.className = 'msg bad'; msg.textContent = 'Kırmızı adımlar yanlış yerde. Onlara dokunup geri al ve tekrar dene.';
+      // remove wrong ones automatically after a moment
+      await sleep(1400);
+      placed = placed.map((v, k) => v === k ? v : null); render();
+    }
+  }
+  $app.append(h('div', { class:'stage' },
+    h('div', { class:'panel' }, h('h3', null, 'Karışık adımlar'), left),
+    h('div', { class:'panel' }, h('h3', null, 'Robotun programı'), right,
+      h('div', { class:'row', style:'margin-top:12px' }, h('button', { class:'go', onclick:check }, '✔ Kontrol et'),
+        h('button', { class:'ghost', onclick:() => { placed = Array(n).fill(null); msg.textContent = ''; render(); } }, 'Temizle')), msg)));
+  render();
+};
+
+/* ============ ÖRÜNTÜ ============ */
+const PSETS = [['🍎','🍌','🍇','🍊'],['🔴','🔵','🟢','🟡'],['🐱','🐶','🐰','🐸'],['⭐','🌙','☀️','☁️'],['🚗','🚲','✈️','🚀'],['🔺','🟦','⚪','🔶']];
+const PATTERNS = ['AB','AB','ABC','AAB','ABB','ABC','AABB','ABCD','AABC','ABAC'];
+SCREENS.oruntu = () => {
+  let round = 0, score = 0, firstTry = true;
+  const total = PATTERNS.length;
+  $app.append(gameHead('Örüntü Bulmaca', null, () => go('home')));
+  $app.append(taskBar('Diziye dikkatle bak. Soru işaretinin yerine hangisi gelmeli?'));
+  const bar = h('div', { class:'progress' }, h('i', { style:'width:0' }));
+  const seq = h('div', { class:'seq' }), ch = h('div', { class:'choices' }), msg = h('div', { class:'msg', role:'status', style:'text-align:center' });
+  const info = h('div', { class:'counter', style:'margin-top:10px;text-align:center' });
+  $app.append(h('div', { class:'panel', style:'max-width:760px;margin:0 auto' }, bar, seq, ch, msg, info));
+  function next(){
+    if (round >= total){
+      const s = score >= 9 ? 3 : score >= 6 ? 2 : 1;
+      setStars('oruntu-0', s);
+      modal({ icon:'🧩', title:'Bitti!', starsN:s, text:`${total} sorudan ${score} tanesini ilk denemede bildin.`, buttons:[{ label:'Tekrar oyna', primary:true, on:() => go('oruntu') }, { label:'Ana sayfa', on:() => go('home') }] });
+      return;
+    }
+    firstTry = true; msg.textContent = '';
+    bar.firstChild.style.width = (round / total * 100) + '%';
+    const pat = PATTERNS[round], set = shuffle(PSETS[Math.floor(Math.random() * PSETS.length)]);
+    const sym = c => set['ABCD'.indexOf(c)];
+    const len = pat.length <= 2 ? 6 : pat.length === 3 ? 7 : 9;
+    const full = Array.from({ length:len + 1 }, (_, i) => sym(pat[i % pat.length]));
+    const answer = full[len];
+    seq.innerHTML = '';
+    full.slice(0, len).forEach(s => seq.append(h('div', { class:'it' }, s)));
+    seq.append(h('div', { class:'it q' }, '?'));
+    const used = [...new Set(pat.split('').map(sym))];
+    let opts = [...new Set([answer, ...shuffle(used), ...set])].slice(0, 3);
+    opts = shuffle(opts);
+    ch.innerHTML = '';
+    opts.forEach(o => {
+      const b = h('button', { class:'choice', 'aria-label':o, onclick:async () => {
+        if (o === answer){
+          b.classList.add('ok'); sfx.ok(); if (firstTry) score++;
+          seq.lastChild.textContent = answer; seq.lastChild.className = 'it';
+          msg.className = 'msg good'; msg.textContent = 'Doğru!';
+          round++; await sleep(900); next();
+        } else { b.classList.add('no'); sfx.no(); firstTry = false; msg.className = 'msg bad'; msg.textContent = 'Tekrar bak. Hangi parça tekrar ediyor?'; }
+      } }, o);
+      ch.append(b);
+    });
+    info.textContent = `Soru ${round + 1} / ${total}  ·  Puan: ${score}`;
+  }
+  next();
+};
+/* ============ LOGIC: shared circuit renderer ============ */
+const GATE = {
+  VE:{ label:'VE', sub:'ikisi birden', color:'#E8553A' },
+  VEYA:{ label:'VEYA', sub:'biri yeter', color:'#2F8FE0' },
+  DEGIL:{ label:'DEĞİL', sub:'tersine çevir', color:'#7457D3' }
+};
+const I = n => ({ in:n });
+const G = (op, ...k) => ({ op, k });
+const SLOT = (...k) => ({ slot:true, k });
+function inputsOf(e, out = []){ if (e.in){ if (!out.includes(e.in)) out.push(e.in); } else e.k.forEach(c => inputsOf(c, out)); return out; }
+function evalE(e, env, slotOp){
+  if (e.in) return !!env[e.in];
+  const op = e.slot ? slotOp : e.op, v = e.k.map(c => evalE(c, env, slotOp));
+  if (!op) return false;
+  return op === 'VE' ? v.every(Boolean) : op === 'VEYA' ? v.some(Boolean) : !v[0];
+}
+function depth(e){ return e.in ? 0 : 1 + Math.max(...e.k.map(depth)); }
+function combos(names){ const out = []; for (let m = 0; m < (1 << names.length); m++){ const env = {}; names.forEach((n, i) => env[n] = !!(m >> (names.length - 1 - i) & 1)); out.push(env); } return out; }
+function envKey(env, names){ return names.map(n => env[n] ? 1 : 0).join(''); }
+
+function drawCircuit(e, env, { slotOp, onToggle, lampLabel } = {}){
+  const NS = 'http://www.w3.org/2000/svg';
+  const D = depth(e), rowH = 84, top = 26, colW = 168, gx0 = 150, gw = 104, gh = 58;
+  const leaves = []; // leaf instances in DFS order
+  const nodes = [];
+  function lay(n, level){
+    if (n.in){ const y = top + leaves.length * rowH + rowH / 2; leaves.push(n); const node = { n, y, x:100, leaf:true }; nodes.push(node); return node; }
+    const kids = n.k.map(c => lay(c, level + 1));
+    const y = kids.reduce((s, k) => s + k.y, 0) / kids.length;
+    const col = D - 1 - level, x = gx0 + col * colW;
+    const node = { n, y, x, kids }; nodes.push(node); return node;
+  }
+  const root = lay(e, 0);
+  const lampX = gx0 + D * colW + 40, W = lampX + 70, H = top + leaves.length * rowH + 10;
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.setAttribute('class', 'circuit'); svg.setAttribute('role', 'img');
+  svg.setAttribute('aria-label', 'Mantık devresi');
+  const el = (tag, attrs, parent = svg) => { const x = document.createElementNS(NS, tag); for (const k in attrs) x.setAttribute(k, attrs[k]); parent.append(x); return x; };
+  const val = n => evalE(n, env, slotOp);
+  // wires first
+  nodes.filter(nd => !nd.leaf).forEach(nd => {
+    nd.kids.forEach((kd, i) => {
+      const py = nd.y + (nd.kids.length === 1 ? 0 : (i === 0 ? -15 : 15));
+      const sx = kd.leaf ? 100 : kd.x + gw, sy = kd.y, px = nd.x, mx = px - 24 - (i * 6);
+      const on = val(kd.n);
+      el('path', { d:`M${sx} ${sy} H${mx} V${py} H${px}`, fill:'none', stroke:on ? '#FFC63A' : '#A9BCC9', 'stroke-width':on ? 7 : 5, 'stroke-linejoin':'round', 'stroke-linecap':'round' });
+    });
+  });
+  const rootOn = val(e);
+  el('path', { d:`M${root.leaf ? 100 : root.x + gw} ${root.y} H${lampX - 28}`, fill:'none', stroke:rootOn ? '#FFC63A' : '#A9BCC9', 'stroke-width':rootOn ? 7 : 5, 'stroke-linecap':'round' });
+  // gates
+  nodes.filter(nd => !nd.leaf).forEach(nd => {
+    const op = nd.n.slot ? slotOp : nd.n.op, g = op ? GATE[op] : null;
+    const grp = el('g', {});
+    el('rect', { x:nd.x, y:nd.y - gh / 2, width:gw, height:gh, rx:14, fill:g ? g.color : '#FFFFFF', stroke:'#16324F', 'stroke-width':3, 'stroke-dasharray':nd.n.slot && !op ? '7 5' : '0' }, grp);
+    const t = el('text', { x:nd.x + gw / 2, y:nd.y + (g ? 2 : 10), 'text-anchor':'middle', 'font-size':g ? 24 : 30, fill:g ? '#fff' : '#16324F' }, grp); t.textContent = g ? g.label : '?';
+    if (g){ const s = el('text', { x:nd.x + gw / 2, y:nd.y + 20, 'text-anchor':'middle', 'font-size':12, fill:'#fff', 'font-family':'Nunito,sans-serif' }, grp); s.textContent = g.sub; }
+    if (nd.n.slot && op){ el('rect', { x:nd.x - 4, y:nd.y - gh / 2 - 4, width:gw + 8, height:gh + 8, rx:17, fill:'none', stroke:'#FFC63A', 'stroke-width':3, 'stroke-dasharray':'6 4' }, grp); }
+  });
+  // switches
+  nodes.filter(nd => nd.leaf).forEach(nd => {
+    const on = !!env[nd.n.in];
+    const g = el('g', { class:'sw', tabindex:onToggle ? 0 : -1, role:'switch', 'aria-checked':on ? 'true' : 'false', 'aria-label':`Anahtar ${nd.n.in}` });
+    const lab = el('text', { x:16, y:nd.y + 9, 'font-size':26, fill:'#16324F' }, g); lab.textContent = nd.n.in;
+    el('rect', { x:40, y:nd.y - 19, width:60, height:38, rx:19, fill:on ? '#3FAE5E' : '#C9D3DA', stroke:'#16324F', 'stroke-width':3 }, g);
+    el('circle', { cx:on ? 81 : 59, cy:nd.y, r:13, fill:'#fff', stroke:'#16324F', 'stroke-width':2.5 }, g);
+    const st = el('text', { x:70, y:nd.y + 36, 'text-anchor':'middle', 'font-size':12, fill:'#4C6479', 'font-family':'Nunito,sans-serif' }, g); st.textContent = on ? 'AÇIK' : 'KAPALI';
+    if (onToggle){
+      g.addEventListener('click', () => onToggle(nd.n.in));
+      g.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' '){ ev.preventDefault(); onToggle(nd.n.in); } });
+    }
+  });
+  // lamp
+  if (rootOn){ for (let a = 0; a < 8; a++){ const r1 = 34, r2 = 46, an = a * Math.PI / 4; el('line', { x1:lampX + r1 * Math.cos(an), y1:root.y + r1 * Math.sin(an), x2:lampX + r2 * Math.cos(an), y2:root.y + r2 * Math.sin(an), stroke:'#FFC63A', 'stroke-width':5, 'stroke-linecap':'round' }); } }
+  el('circle', { cx:lampX, cy:root.y, r:27, fill:rootOn ? '#FFD95A' : '#DCE4EA', stroke:'#16324F', 'stroke-width':3 });
+  el('rect', { x:lampX - 11, y:root.y + 24, width:22, height:12, rx:3, fill:'#16324F' });
+  if (lampLabel){ const t = el('text', { x:lampX, y:root.y + 56, 'text-anchor':'middle', 'font-size':13, fill:'#4C6479', 'font-family':'Nunito,sans-serif' }); t.textContent = lampLabel; }
+  return svg;
+}
+function gateLegend(){
+  return h('div', { class:'legend' },
+    h('div', { style:'background:' + GATE.VE.color }, h('b', null, 'VE'), 'Lamba, girişlerin hepsi açıksa yanar.'),
+    h('div', { style:'background:' + GATE.VEYA.color }, h('b', null, 'VEYA'), 'Lamba, girişlerden en az biri açıksa yanar.'),
+    h('div', { style:'background:' + GATE.DEGIL.color }, h('b', null, 'DEĞİL'), 'Girişi tersine çevirir: açık ise kapalı, kapalı ise açık.'));
+}
+function bitsEl(env, names){ return names.map(n => h('span', { class:'bit ' + (env[n] ? 'on' : 'off') }, `${n}: ${env[n] ? 'AÇIK' : 'KAPALI'}`)); }
+
+/* ============ LAMBAYI YAK ============ */
+const LAMP_LEVELS = [
+  { name:'VE kapısı', e:G('VE', I('A'), I('B')), tip:'VE kapısı “ikisi birden” ister. Anahtarlara dokun ve lambayı yak!' },
+  { name:'VEYA kapısı', e:G('VEYA', I('A'), I('B')), tip:'VEYA kapısında “biri yeter”. Lambayı yakan 3 farklı yol var. Hepsini bul!' },
+  { name:'DEĞİL kapısı', e:G('DEGIL', I('A')), tip:'DEĞİL kapısı her şeyi tersine çevirir. Lamba ne zaman yanıyor?' },
+  { name:'VE + DEĞİL', e:G('VE', I('A'), G('DEGIL', I('B'))), tip:'İki kapı bir arada. Lambayı yakan yolu bul.' },
+  { name:'VE + VEYA', e:G('VEYA', G('VE', I('A'), I('B')), I('C')), tip:'Üç anahtar var. Lambayı yakan 5 yolun hepsini bulabilir misin?' },
+  { name:'Gece Bekçisi', e:G('VE', G('VEYA', I('A'), I('B')), G('DEGIL', I('C'))), tip:'Lambayı yakan bütün yolları bul. C anahtarı ne işe yarıyor?' },
+  { name:'Ters Dünya', e:G('DEGIL', G('VEYA', I('A'), I('B'))), tip:'Bu devrede lamba sadece bir durumda yanar. Bul bakalım!' },
+  { name:'Usta Devre', e:G('VEYA', G('DEGIL', I('A')), G('VE', I('B'), I('C'))), tip:'Son bölüm! Lambayı yakan bütün yolları keşfet.' }
+];
+SCREENS.lamba = (lvArg) => {
+  if (lvArg == null){
+    levelSelect('lamba', 'Lambayı Yak', 'Bilgisayarlar içinde milyonlarca küçük kapı vardır. Her kapı “açık” ve “kapalı” sinyallerle karar verir. Anahtarlara dokun, lambanın ne zaman yandığını keşfet.', LAMP_LEVELS.map(l => l.name), i => go('lamba', i));
+    return;
+  }
+  const L = LAMP_LEVELS[lvArg], names = inputsOf(L.e).sort();
+  const env = {}; names.forEach(n => env[n] = false);
+  const winners = combos(names).filter(c => evalE(L.e, c));
+  const found = new Set(); let toggles = 0, done = false;
+  $app.append(gameHead('Lambayı Yak', `Bölüm ${lvArg + 1}: ${L.name}`, () => go('lamba')));
+  $app.append(taskBar(L.tip));
+  const svgBox = h('div', { class:'boardwrap', style:'background:#F2F8FC' });
+  const foundEl = h('div', { class:'found' }), cnt = h('div', { class:'counter' });
+  function render(){
+    svgBox.innerHTML = '';
+    svgBox.append(drawCircuit(L.e, env, { onToggle:n => { if (done) return; env[n] = !env[n]; toggles++; sfx.step(); check(); render(); } }));
+    foundEl.innerHTML = '';
+    [...found].forEach(k => { const e2 = {}; names.forEach((n, i) => e2[n] = k[i] === '1'); foundEl.append(h('div', { class:'combo' }, '💡', ...bitsEl(e2, names))); });
+    for (let i = found.size; i < winners.length; i++) foundEl.append(h('div', { class:'combo ghosted' }, '❔ henüz bulunmadı'));
+    cnt.innerHTML = ''; cnt.append('Bulunan yollar: ', h('b', null, `${found.size} / ${winners.length}`));
+  }
+  function check(){
+    if (!evalE(L.e, env)) return;
+    const k = envKey(env, names);
+    if (found.has(k)) return;
+    found.add(k); sfx.coin();
+    if (found.size === winners.length){
+      done = true;
+      const s = toggles <= (1 << names.length) + 2 ? 3 : 2;
+      setStars('lamba-' + lvArg, s);
+      setTimeout(() => { sfx.win(); modal({ icon:'💡', title:'Hepsini buldun!', starsN:s, text:`Bu devrede lamba ${winners.length} farklı durumda yanıyor. Bunun listesine “doğruluk tablosu” denir.`,
+        buttons:[ lvArg < LAMP_LEVELS.length - 1 ? { label:'Sonraki bölüm →', primary:true, on:() => go('lamba', lvArg + 1) } : { label:'Bölümler', primary:true, on:() => go('lamba') } ] }); }, 500);
+    }
+  }
+  $app.append(h('div', { class:'stage' }, svgBox, h('div', { class:'panel' }, h('h3', null, 'Lambayı yakan yollar'), cnt, foundEl,
+    h('p', { class:'muted small', style:'margin:12px 0 0' }, 'İpucu: Anahtarları sırayla dene. Her farklı açık/kapalı durumu bir “yol”dur.'))));
+  $app.append(gateLegend());
+  render();
+};
+
+/* ============ KAPI BEKÇİSİ ============ */
+const GUARD_Q = [
+  { story:'Kale kapısı, anahtar VE şifre birlikte olursa açılır.', facts:[['Anahtar var mı?', 1], ['Şifre biliniyor mu?', 1]], gate:'VE', ask:'Kapı açılır mı?', ans:true, why:'İkisi de var, VE kapısı açılır.' },
+  { story:'Kale kapısı, anahtar VE şifre birlikte olursa açılır.', facts:[['Anahtar var mı?', 1], ['Şifre biliniyor mu?', 0]], gate:'VE', ask:'Kapı açılır mı?', ans:false, why:'VE kapısı ikisini birden ister. Şifre olmadığı için kapı açılmaz.' },
+  { story:'Köpek Karabaş, kemik VEYA top görürse sevinir.', facts:[['Kemik gördü mü?', 0], ['Top gördü mü?', 1]], gate:'VEYA', ask:'Karabaş sevinir mi?', ans:true, why:'VEYA kapısında biri yeter. Topu gördü, sevindi!' },
+  { story:'Köpek Karabaş, kemik VEYA top görürse sevinir.', facts:[['Kemik gördü mü?', 0], ['Top gördü mü?', 0]], gate:'VEYA', ask:'Karabaş sevinir mi?', ans:false, why:'Hiçbirini görmedi, bu yüzden sevinmedi.' },
+  { story:'Gece lambası, oda aydınlık DEĞİLSE yanar.', facts:[['Oda aydınlık mı?', 0]], gate:'DEGIL', ask:'Lamba yanar mı?', ans:true, why:'Oda aydınlık değil, yani karanlık. DEĞİL kapısı tersine çevirir, lamba yanar.' },
+  { story:'Gece lambası, oda aydınlık DEĞİLSE yanar.', facts:[['Oda aydınlık mı?', 1]], gate:'DEGIL', ask:'Lamba yanar mı?', ans:false, why:'Oda aydınlık, lamba yanmaz.' },
+  { story:'Ayşe bahçeye çıkmak için hava güneşli VE ödevleri bitmiş olmalı.', facts:[['Hava güneşli mi?', 1], ['Ödevler bitti mi?', 0]], gate:'VE', ask:'Ayşe bahçeye çıkabilir mi?', ans:false, why:'Ödevler bitmedi. VE kapısı için ikisi de gerekli.' },
+  { story:'Okul zili, saat 10 VEYA saat 11 olunca çalar.', facts:[['Saat 10 mu?', 0], ['Saat 11 mi?', 1]], gate:'VEYA', ask:'Zil çalar mı?', ans:true, why:'Saat 11 oldu, biri yeter. Zil çalar!' },
+  { story:'Robot dışarı çıkmak için pili dolu olmalı VE yağmur yağMAMALI (DEĞİL).', facts:[['Pil dolu mu?', 1], ['Yağmur yağıyor mu?', 1]], gate:'VE', ask:'Robot dışarı çıkar mı?', ans:false, why:'Yağmur yağıyor. “Yağmur yağmıyor” koşulu sağlanmadığı için robot çıkmaz.' },
+  { story:'Hazine sandığı, (anahtar VE şifre) VEYA kralın izni ile açılır.', facts:[['Anahtar var mı?', 0], ['Şifre biliniyor mu?', 1], ['Kral izin verdi mi?', 1]], gate:'VEYA', ask:'Sandık açılır mı?', ans:true, why:'Anahtar yok ama kral izin verdi. VEYA kapısında biri yeter!' }
+];
+SCREENS.bekci = () => {
+  let q = 0, score = 0, answered = false;
+  $app.append(gameHead('Kapı Bekçisi', null, () => go('home')));
+  const bar = h('div', { class:'progress' }, h('i', { style:'width:0' }));
+  const box = h('div', { class:'panel', style:'max-width:760px;margin:0 auto' });
+  $app.append(box);
+  function show(){
+    if (q >= GUARD_Q.length){
+      const s = score >= 9 ? 3 : score >= 6 ? 2 : 1;
+      setStars('bekci-0', s);
+      modal({ icon:'🏰', title:'Görev tamam!', starsN:s, text:`${GUARD_Q.length} sorudan ${score} tanesini doğru bildin.`, buttons:[{ label:'Tekrar oyna', primary:true, on:() => go('bekci') }, { label:'Ana sayfa', on:() => go('home') }] });
+      return;
+    }
+    answered = false;
+    const Q = GUARD_Q[q], g = GATE[Q.gate];
+    bar.firstChild.style.width = (q / GUARD_Q.length * 100) + '%';
+    const msg = h('div', { class:'msg', role:'status', style:'text-align:center' });
+    const nextBtn = h('button', { class:'go', hidden:true, onclick:() => { q++; show(); } }, 'Sonraki →');
+    const pick = (v, b) => {
+      if (answered) return; answered = true;
+      const ok = v === Q.ans;
+      if (ok){ score++; sfx.ok(); b.style.background = '#3FAE5E'; } else { sfx.no(); b.style.background = '#E5484D'; }
+      msg.className = 'msg ' + (ok ? 'good' : 'bad'); msg.textContent = (ok ? 'Doğru! ' : 'Olmadı. ') + Q.why;
+      nextBtn.hidden = false; nextBtn.focus();
+    };
+    const yes = h('button', { class:'go', style:'background:var(--paper);color:var(--ink)', onclick:e => pick(true, e.currentTarget) }, '✅ Evet');
+    const no = h('button', { class:'go', style:'background:var(--paper);color:var(--ink)', onclick:e => pick(false, e.currentTarget) }, '❌ Hayır');
+    const qtext = Q.ask;
+    box.innerHTML = '';
+    box.append(bar, h('div', { class:'row', style:'margin-top:14px' }, h('span', { class:'gatepill', style:'background:' + g.color }, g.label), h('span', { class:'counter' }, `Soru ${q + 1} / ${GUARD_Q.length}`), h('div', { style:'flex:1' }), h('button', { class:'icon-btn', 'aria-label':'Sesli oku', onclick:() => say(Q.story + ' ' + Q.facts.map(f => f[0] + ' ' + (f[1] ? 'evet' : 'hayır')).join(', ') + '. ' + qtext) }, '🗣️')),
+      h('p', { class:'story' }, Q.story),
+      h('div', { class:'facts' }, ...Q.facts.map(f => h('span', { class:'fact ' + (f[1] ? 'y' : 'n') }, f[0] + ' ', h('b', null, f[1] ? 'EVET' : 'HAYIR')))),
+      h('p', { style:'font-family:var(--font-display);font-weight:800;font-size:26px;text-align:center;margin:18px 0 0' }, qtext),
+      h('div', { class:'yn' }, yes, no), msg, h('div', { class:'row', style:'justify-content:center;margin-top:8px' }, nextBtn));
+  }
+  show();
+};
+
+/* ============ DEVRE USTASI ============ */
+const CIRC_LEVELS = [
+  { tmpl:SLOT(I('A'), I('B')), target:G('VE', I('A'), I('B')), tip:'Lamba sadece iki anahtar da açıkken yanmalı. Hangi kapıyı koymalıyız?' },
+  { tmpl:SLOT(I('A'), I('B')), target:G('VEYA', I('A'), I('B')), tip:'Tabloya bak: lamba hangi durumlarda yanıyor? Doğru kapıyı seç.' },
+  { tmpl:G('DEGIL', SLOT(I('A'), I('B'))), target:G('DEGIL', G('VE', I('A'), I('B'))), tip:'Sonda bir DEĞİL kapısı var. Soru işaretinin yerine ne gelmeli?' },
+  { tmpl:G('DEGIL', SLOT(I('A'), I('B'))), target:G('DEGIL', G('VEYA', I('A'), I('B'))), tip:'Lamba sadece her şey kapalıyken yanıyor. Hangi kapı?' },
+  { tmpl:SLOT(G('VE', I('A'), I('B')), I('C')), target:G('VEYA', G('VE', I('A'), I('B')), I('C')), tip:'Üç anahtarlı devre. Tabloyu dikkatle incele.' },
+  { tmpl:G('VE', I('A'), SLOT(I('B'), I('C'))), target:G('VE', I('A'), G('VEYA', I('B'), I('C'))), tip:'Son devre! A her zaman gerekli mi? B ve C için hangi kapı?' }
+];
+SCREENS.devre = (lvArg) => {
+  if (lvArg == null){
+    levelSelect('devre', 'Devre Ustası', 'Mühendisler önce “ne istiyoruz?” tablosunu yazar, sonra devreyi kurar. Tabloya bak, soru işaretinin yerine doğru kapıyı koy.', CIRC_LEVELS.map((c, i) => `Devre ${i + 1}`), i => go('devre', i));
+    return;
+  }
+  const C = CIRC_LEVELS[lvArg], names = inputsOf(C.tmpl).sort();
+  const env = {}; names.forEach(n => env[n] = false);
+  let slotOp = null, tries = 0, done = false;
+  $app.append(gameHead('Devre Ustası', `Devre ${lvArg + 1}`, () => go('devre')));
+  $app.append(taskBar(C.tip));
+  const svgBox = h('div', { class:'boardwrap', style:'background:#F2F8FC' });
+  const tableBox = h('div', { class:'tablebox' }), msg = h('div', { class:'msg', role:'status' });
+  const opts = h('div', { class:'opts' });
+  ['VE', 'VEYA'].forEach(op => opts.append(h('button', { style:'background:' + GATE[op].color, onclick:() => choose(op) }, GATE[op].label)));
+  function choose(op){
+    if (done) return;
+    slotOp = op; tries++; render();
+    const ok = combos(names).every(c => evalE(C.tmpl, c, op) === evalE(C.target, c));
+    if (ok){
+      done = true; sfx.win(); msg.className = 'msg good'; msg.textContent = 'Tablo tamamen tuttu!';
+      const s = tries === 1 ? 3 : 2; setStars('devre-' + lvArg, s);
+      setTimeout(() => modal({ icon:'🔌', title:'Devre çalışıyor!', starsN:s, text:'Senin devren istenen tabloyu birebir sağlıyor.',
+        buttons:[ lvArg < CIRC_LEVELS.length - 1 ? { label:'Sonraki devre →', primary:true, on:() => go('devre', lvArg + 1) } : { label:'Devreler', primary:true, on:() => go('devre') } ] }), 700);
+    } else { sfx.no(); msg.className = 'msg bad'; msg.textContent = 'Kırmızı satırlarda lamba istenen gibi değil. Diğer kapıyı dene.'; }
+  }
+  function render(){
+    svgBox.innerHTML = '';
+    svgBox.append(drawCircuit(C.tmpl, env, { slotOp, onToggle:n => { env[n] = !env[n]; sfx.step(); render(); } }));
+    const t = h('table', { class:'tt' });
+    t.append(h('tr', null, ...names.map(n => h('th', null, n)), h('th', null, 'İstenen'), h('th', null, 'Senin devren')));
+    combos(names).forEach(c => {
+      const want = evalE(C.target, c), mine = slotOp ? evalE(C.tmpl, c, slotOp) : null;
+      const cur = names.every(n => c[n] === env[n]);
+      t.append(h('tr', { style:(cur ? 'outline:3px solid var(--ink);' : '') + (mine == null ? '' : mine === want ? 'background:#E7F7EA' : 'background:#FDE8E8') },
+        ...names.map(n => h('td', null, h('span', { class:'bit ' + (c[n] ? 'on' : 'off') }, c[n] ? 'AÇIK' : 'KAPALI'))),
+        h('td', null, h('span', { class:'bulb' + (want ? ' on' : ''), 'aria-label':want ? 'yanar' : 'söner' })),
+        h('td', null, mine == null ? '—' : h('span', { class:'bulb' + (mine ? ' on' : ''), 'aria-label':mine ? 'yanar' : 'söner' }))));
+    });
+    tableBox.innerHTML = ''; tableBox.append(t);
+  }
+  $app.append(h('div', { class:'stage' }, svgBox, h('div', { class:'panel' }, h('h3', null, 'İstenen tablo'), tableBox,
+    h('h3', { style:'margin-top:16px' }, 'Soru işaretinin yerine hangi kapı?'), opts, msg,
+    h('p', { class:'muted small', style:'margin:10px 0 0' }, 'Anahtarlara dokunarak devreni deneyebilirsin. Kalın çerçeveli satır şu anki durumu gösterir.'))));
+  $app.append(gateLegend());
+  render();
+};
+/* ============ CAMERA LAB: color + motion detection (all on-device) ============ */
+const COLOR_HEX = { U:'#3FAE5E', D:'#E5484D', L:'#2F8FE0', R:'#F2B705' };
+function classify(r, g, b){
+  const mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn;
+  if (mx < 70 || d / mx < .4) return null;
+  let hh;
+  if (mx === r) hh = 60 * (((g - b) / d) % 6); else if (mx === g) hh = 60 * ((b - r) / d + 2); else hh = 60 * ((r - g) / d + 4);
+  if (hh < 0) hh += 360;
+  if (hh < 14 || hh >= 340) return 'D';
+  if (hh >= 36 && hh < 70) return 'R';
+  if (hh >= 85 && hh < 165) return 'U';
+  if (hh >= 190 && hh < 250) return 'L';
+  return null;
+}
+function camPanel({ zones = false }){
+  const video = h('video', { playsinline:true, muted:true, autoplay:true, class:'mirror' });
+  video.muted = true;
+  const off = h('div', { class:'off' }, h('div', null, h('div', { style:'font-size:44px' }, '📷'), h('p', { style:'margin:6px 0 12px' }, 'Kamera kapalı'),
+    h('button', { class:'go', onclick:() => api.start() }, 'Kamerayı aç')));
+  const box = zones ? null : h('div', { class:'box' });
+  const zEl = zones ? h('div', { class:'zones' }, h('div', { class:'zu' }, '↑'), h('div', { class:'zd' }, '↓'), h('div', { class:'zl' }, '←'), h('div', { class:'zr' }, '→')) : null;
+  const el = h('div', { class:'cam' }, video, box, zEl, off);
+  const note = h('div', { class:'camnote', hidden:true });
+  const cv = document.createElement('canvas'); cv.width = zones ? 80 : 160; cv.height = zones ? 60 : 120;
+  const ctx = cv.getContext('2d', { willReadFrequently:true });
+  let stream = null, timer = null;
+  const api = {
+    el, note, box, zEl, onFrame:null,
+    async start(){
+      note.hidden = true;
+      try {
+        if (!navigator.mediaDevices?.getUserMedia) throw new Error('nomedia');
+        stream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:'user', width:{ ideal:640 }, height:{ ideal:480 } }, audio:false });
+        video.srcObject = stream; await video.play().catch(() => {});
+        off.hidden = true;
+        timer = setInterval(() => {
+          if (video.readyState < 2) return;
+          ctx.drawImage(video, 0, 0, cv.width, cv.height);
+          api.onFrame && api.onFrame(ctx.getImageData(0, 0, cv.width, cv.height), cv.width, cv.height);
+        }, 110);
+      } catch(e){
+        note.hidden = false;
+        note.textContent = 'Kamera açılamadı. Paylaşılan sayfa tarayıcıdan kamera izni alamıyor olabilir. Canlı kamerayla oynamak için oyunun bilgisayara indirilen sürümünü (Kod_Kasifleri.html) Chrome ile açın. Bu sırada aşağıdaki butonlarla oynayabilirsiniz.';
+      }
+    },
+    stop(){ clearInterval(timer); timer = null; if (stream) stream.getTracks().forEach(t => t.stop()); stream = null; }
+  };
+  return api;
+}
+/* dominant colour inside the centre box of a frame */
+function boxColor(img, W, H){
+  const cnt = { U:0, D:0, L:0, R:0 }; let tot = 0;
+  const x0 = Math.floor(W * .3), x1 = Math.floor(W * .7), y0 = Math.floor(H * .22), y1 = Math.floor(H * .78);
+  for (let y = y0; y < y1; y += 2) for (let x = x0; x < x1; x += 2){
+    // video is mirrored on screen, the box is centred so mirroring does not matter
+    const i = (y * W + x) * 4, c = classify(img.data[i], img.data[i + 1], img.data[i + 2]); tot++;
+    if (c) cnt[c]++;
+  }
+  const best = Object.entries(cnt).sort((a, b) => b[1] - a[1]);
+  if (best[0][1] > tot * .14 && best[0][1] > best[1][1] * 1.6) return best[0][0];
+  return null;
+}
+function detView(){
+  const sw = h('div', { class:'sw2' }), lab = h('span', null, 'Kartı kutunun içine tut'), ring = h('div', { class:'ring' }, h('i'));
+  return { el:h('div', { class:'det', 'aria-live':'polite' }, sw, lab, ring),
+    set(c, p){ sw.style.background = c ? COLOR_HEX[c] : ''; lab.textContent = c ? `${DIR_COLOR[c]} → ${DIR_NAME[c]}` : 'Kartı kutunun içine tut'; ring.firstChild.style.width = Math.round((p || 0) * 100) + '%'; } };
+}
+/* split a photo of a row of cards into a left-to-right command list */
+function readCardRow(img){
+  const W = 480, H = Math.max(40, Math.round(img.naturalHeight * W / img.naturalWidth));
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  const ctx = cv.getContext('2d', { willReadFrequently:true }); ctx.drawImage(img, 0, 0, W, H);
+  const d = ctx.getImageData(0, 0, W, H).data;
+  const y0 = Math.floor(H * .08), y1 = Math.floor(H * .92), band = y1 - y0;
+  const col = [];
+  for (let x = 0; x < W; x++){
+    const cnt = { U:0, D:0, L:0, R:0 };
+    for (let y = y0; y < y1; y += 2){ const i = (y * W + x) * 4, c = classify(d[i], d[i + 1], d[i + 2]); if (c) cnt[c]++; }
+    const best = Object.entries(cnt).sort((a, b) => b[1] - a[1])[0];
+    col.push(best[1] >= Math.max(4, band / 2 * .12) ? best[0] : null);
+  }
+  let runs = [];
+  for (let x = 0; x < W;){
+    const c = col[x]; let e = x; while (e < W && col[e] === c) e++;
+    if (c) runs.push({ c, x0:x, x1:e });
+    x = e;
+  }
+  // merge tiny gaps of the same colour, then drop specks
+  const merged = [];
+  runs.forEach(r => { const last = merged[merged.length - 1]; if (last && last.c === r.c && r.x0 - last.x1 <= 3) last.x1 = r.x1; else merged.push({ ...r }); });
+  runs = merged.filter(r => r.x1 - r.x0 >= W * .025);
+  if (!runs.length) return { cmds:[], canvas:cv };
+  const widths = runs.map(r => r.x1 - r.x0).sort((a, b) => a - b), med = widths[Math.floor(widths.length / 2)];
+  const out = [];
+  runs.forEach(r => { const k = Math.max(1, Math.round((r.x1 - r.x0) / med)); const w = (r.x1 - r.x0) / k; for (let i = 0; i < k; i++) out.push({ c:r.c, x0:r.x0 + i * w, x1:r.x0 + (i + 1) * w }); });
+  ctx.lineWidth = 4; ctx.font = 'bold 22px sans-serif';
+  out.forEach((r, i) => { ctx.strokeStyle = '#16324F'; ctx.strokeRect(r.x0 + 2, y0, r.x1 - r.x0 - 4, band); ctx.fillStyle = '#16324F'; ctx.fillRect(r.x0 + 2, y0, 30, 28); ctx.fillStyle = '#fff'; ctx.fillText(i + 1, r.x0 + 8, y0 + 22); });
+  return { cmds:out.map(r => r.c), canvas:cv };
+}
+function cardSheet(){
+  const sheet = h('div', { class:'cardsheet' });
+  ['U', 'D', 'L', 'R'].forEach(d => { const c = h('div', { class:'pcard', style:`background:${COLOR_HEX[d]};${d === 'R' ? 'color:#16324F' : ''}` }); const inner = h('div', { style:'display:grid;place-items:center;gap:6px;width:100%' }); const a = arrowSvg(d); inner.append(a, h('span', null, `${DIR_COLOR[d]} · ${DIR_NAME[d]}`)); c.append(inner); sheet.append(c); });
+  return sheet;
+}
+const inFrame = (() => { try { return window.self !== window.top; } catch(e){ return true; } })();
+function camLevelName(i){ return HZ_LEVELS[CAM_LEVELS[i]].name; }
+function camWin(key, i, s){
+  setStars(key + '-' + i, s);
+  modal({ title:'Fıstık yuvada!', starsN:s, text:'Bilgisayar renkleri görerek Fıstık’ı yönetti. İşte görüntü işleme!',
+    buttons:[ i < CAM_LEVELS.length - 1 ? { label:'Sonraki bölüm →', primary:true, on:() => go(key, i + 1) } : { label:'Bölümler', primary:true, on:() => go(key) } ] });
+}
+
+/* ============ KARTLARLA KODLAMA ============ */
+SCREENS.kart = (lvArg) => {
+  if (lvArg == null){
+    levelSelect('kart', 'Kartlarla Kodlama', 'Renkli ok kartları birer komuttur: yeşil yukarı, kırmızı aşağı, mavi sola, sarı sağa. Kartları tek tek kameraya göster ya da masaya dizip fotoğrafını çek. Kartlar sekmesinde yazdırılacak kartları bulabilirsiniz.', CAM_LEVELS.map((v, i) => camLevelName(i)), i => go('kart', i));
+    return;
+  }
+  const L = HZ_LEVELS[CAM_LEVELS[lvArg]], board = new Board(L.map), par = shortest(L.map);
+  let prog = [], running = false;
+  $app.append(gameHead('Kartlarla Kodlama', `Bölüm ${lvArg + 1}: ${L.name}`, () => go('kart')));
+  $app.append(taskBar('Kartları sırayla kameraya göster. Her kart programa bir ok ekler. Program hazır olunca Çalıştır’a bas.'));
+  const progEl = h('div', { class:'prog', 'data-empty':'Gösterdiğin kartlar burada sıralanacak.' });
+  const msg = h('div', { class:'msg', role:'status' });
+  function renderProg(){ progEl.innerHTML = ''; prog.forEach((d, i) => progEl.append(chip(d, { 'data-path':String(i), title:'Silmek için dokun', onclick:() => { if (running) return; prog.splice(i, 1); renderProg(); } }))); }
+  function add(d){ if (running) return; prog.push(d); sfx.add(); renderProg(); }
+  async function run(){
+    if (running || !prog.length) return; running = true; msg.textContent = '';
+    const r = await runProgram(board, prog.map((d, i) => ({ d, path:String(i) })), p => progEl.querySelectorAll('.chip').forEach(c => c.classList.toggle('now', c.dataset.path === p)));
+    running = false;
+    if (r.res === 'abort') return;
+    if (r.res === 'win') camWin('kart', lvArg, prog.length <= par ? 3 : 2);
+    else { msg.className = 'msg bad'; msg.textContent = FAIL_TEXT[r.res]; sfx.no(); if (r.at) progEl.querySelector(`[data-path="${r.at}"]`)?.classList.add('bad'); }
+  }
+  // live tab
+  const cam = camPanel({}), det = detView();
+  let last = null, stable = 0, armed = true, empty = 0;
+  cam.onFrame = (img, W, H) => {
+    const c = boxColor(img, W, H);
+    if (c && c === last) stable++; else stable = c ? 1 : 0;
+    last = c;
+    if (!c){ empty++; if (empty >= 4) armed = true; } else empty = 0;
+    det.set(c, armed ? Math.min(1, stable / 6) : 1);
+    if (cam.box) cam.box.style.borderColor = c ? COLOR_HEX[c] : '#fff';
+    if (c && armed && stable >= 6){ armed = false; add(c); }
+  };
+  const live = h('div', null, cam.el, cam.note, det.el, h('p', { class:'muted small', style:'margin:6px 0 0' }, 'Kartı kutuya tut, çubuk dolunca ok eklenir. Sonraki kart için önce kartı kutudan çek.'));
+  // photo tab
+  const fileIn = h('input', { type:'file', accept:'image/*', capture:'environment', id:'cardPhoto', style:'max-width:100%' });
+  const photoOut = h('div');
+  fileIn.addEventListener('change', () => {
+    const f = fileIn.files && fileIn.files[0]; if (!f) return;
+    const url = URL.createObjectURL(f), im = new Image();
+    im.onload = () => {
+      const r = readCardRow(im); URL.revokeObjectURL(url);
+      photoOut.innerHTML = '';
+      r.canvas.className = 'photo-prev'; photoOut.append(r.canvas);
+      if (!r.cmds.length){ photoOut.append(h('p', { class:'msg bad' }, 'Fotoğrafta renkli kart bulunamadı. Kartları beyaz bir zemine tek sıra halinde dizip yeniden dene.')); return; }
+      prog = r.cmds.slice(); renderProg(); sfx.ok();
+      photoOut.append(h('p', { class:'msg good' }, `${r.cmds.length} kart okundu. Programı kontrol et ve Çalıştır’a bas.`));
+    };
+    im.src = url;
+  });
+  const photo = h('div', { hidden:true }, h('p', { style:'margin:0 0 8px', class:'small' }, 'Kartları beyaz bir masaya soldan sağa tek sıra halinde diz, aralarında biraz boşluk bırak ve yukarıdan fotoğraf çek.'), h('label', { for:'cardPhoto', class:'small', style:'font-weight:800;display:block;margin-bottom:4px' }, 'Kart fotoğrafı seç'), fileIn, photoOut);
+  // demo photo so the reader works without a camera
+  const demoBtn = h('button', { class:'ghost', style:'margin-top:10px', onclick:() => {
+    const cv = document.createElement('canvas'); const seq = (L.solution || solvePath(L.map)).slice(0, 10); cv.width = 70 * seq.length + 20; cv.height = 120;
+    const c2 = cv.getContext('2d'); c2.fillStyle = '#fbfbf7'; c2.fillRect(0, 0, cv.width, cv.height);
+    seq.forEach((d, i) => { c2.fillStyle = COLOR_HEX[d]; c2.fillRect(14 + i * 70, 18, 56, 84); });
+    const im = new Image(); im.onload = () => { const r = readCardRow(im); photoOut.innerHTML = ''; r.canvas.className = 'photo-prev'; photoOut.append(r.canvas, h('p', { class:'msg good' }, `Örnek fotoğraftan ${r.cmds.length} kart okundu.`)); prog = r.cmds; renderProg(); };
+    im.src = cv.toDataURL();
+  } }, 'Örnek fotoğrafla dene');
+  photo.append(demoBtn);
+  // cards tab
+  const cards = h('div', { hidden:true }, h('p', { class:'small', style:'margin:0 0 10px' }, 'Bu kartları renkli yazdırın ya da renkli kartona okları çizin. Her renk bir yöndür.'), cardSheet(),
+    inFrame ? h('p', { class:'muted small' }, 'Yazdırmak için oyunun bilgisayara indirilen sürümünü açın.') : h('button', { class:'ghost noprint', style:'margin-top:10px', onclick:() => window.print() }, '🖨 Kartları yazdır'));
+  const tabsEl = h('div', { class:'tabs', role:'group', 'aria-label':'Mod' });
+  const tabs = [['Canlı kamera', live], ['Fotoğraf', photo], ['Kartlar', cards]];
+  tabs.forEach(([name, panel], i) => tabsEl.append(h('button', { 'aria-pressed':i === 0 ? 'true' : 'false', onclick:e => { tabs.forEach(t => t[1].hidden = t[1] !== panel); tabsEl.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b === e.currentTarget ? 'true' : 'false')); } }, name)));
+  $app.append(h('div', { class:'stage' },
+    h('div', null, board.wrap, h('div', { class:'panel', style:'margin-top:16px' }, h('h3', null, 'Program'), progEl,
+      h('div', { class:'row' }, h('button', { class:'go', onclick:run }, '▶ Çalıştır'), h('button', { class:'ghost', onclick:() => { runToken++; running = false; prog = []; board.reset(); msg.textContent = ''; renderProg(); } }, 'Temizle')), msg)),
+    h('div', { class:'panel' }, tabsEl, live, photo, cards)));
+  renderProg();
+  cleanup = () => cam.stop();
+};
+/* shortest command sequence (used for the demo photo) */
+function solvePath(map){
+  const H = map.length, W = map[0].length, ac = []; let s, g;
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++){ const c = map[y][x]; if (c === 'S') s = [x, y]; if (c === 'G') g = [x, y]; if (c === '*') ac.push(x + ',' + y); }
+  const full = (1 << ac.length) - 1, prev = new Map(), q = [[s[0], s[1], 0]], k0 = s + ',0'; prev.set(k0, null);
+  while (q.length){
+    const [x, y, m] = q.shift(), key = x + ',' + y + ',' + m;
+    if (x === g[0] && y === g[1] && m === full){ const path = []; let k = key; while (prev.get(k)){ const [pk, d] = prev.get(k); path.unshift(d); k = pk; } return path; }
+    for (const d in DIRS){
+      const nx = x + DIRS[d][0], ny = y + DIRS[d][1];
+      if (ny < 0 || ny >= H || nx < 0 || nx >= W) continue;
+      const c = map[ny][nx]; if (c === '#' || c === '~') continue;
+      let nm = m; const ai = ac.indexOf(nx + ',' + ny); if (ai >= 0) nm |= 1 << ai;
+      const nk = nx + ',' + ny + ',' + nm; if (prev.has(nk)) continue; prev.set(nk, [key, d]); q.push([nx, ny, nm]);
+    }
+  }
+  return [];
+}
+
+/* ============ live-control games (Renk Avı, Hareketle Yönlendir) ============ */
+function liveGame(key, title, intro, lvArg, zones){
+  if (lvArg == null){ levelSelect(key, title, intro, CAM_LEVELS.map((v, i) => camLevelName(i)), i => go(key, i)); return; }
+  const L = HZ_LEVELS[CAM_LEVELS[lvArg]], board = new Board(L.map), par = shortest(L.map);
+  let moves = 0, busy = false, done = false;
+  $app.append(gameHead(title, `Bölüm ${lvArg + 1}: ${L.name}`, () => go(key)));
+  $app.append(taskBar(zones ? 'Kamerayı aç. Elini ekranın üst, alt, sağ ya da sol kenarında salla; Fıstık o yöne bir adım gider.' : 'Kamerayı aç. Yeşil, kırmızı, mavi ya da sarı bir eşyayı kutuya tut. Fıstık o rengin yönüne bir adım gider. Sonraki adım için eşyayı kutudan çek.'));
+  const counter = h('div', { class:'counter' });
+  const paint = () => { counter.innerHTML = ''; counter.append('Adım: ', h('b', null, moves), `  ·  En kısa yol: ${par}`); };
+  async function move(d){
+    if (busy || done) return; busy = true; moves++; paint();
+    const r = await board.step(d); busy = false;
+    if (r === 'win'){ done = true; camWin(key, lvArg, moves <= par ? 3 : moves <= par + 3 ? 2 : 1); }
+  }
+  const cam = camPanel({ zones });
+  let extra;
+  if (zones){
+    let prev = null, cool = 0, frames = 0;
+    const zoneEls = { U:cam.zEl.querySelector('.zu'), D:cam.zEl.querySelector('.zd'), L:cam.zEl.querySelector('.zl'), R:cam.zEl.querySelector('.zr') };
+    cam.onFrame = (img, W, H) => {
+      const g = new Uint8Array(W * H);
+      for (let i = 0; i < W * H; i++) g[i] = (img.data[i * 4] * 3 + img.data[i * 4 + 1] * 6 + img.data[i * 4 + 2]) / 10;
+      frames++;
+      if (prev && frames > 5){
+        // raw frame is not mirrored: raw-left = viewer's right
+        const z = { U:[.25, .75, 0, .24], D:[.25, .75, .76, 1], R:[0, .24, .25, .75], L:[.76, 1, .25, .75] }, f = {};
+        for (const k in z){
+          const [a, b, c, e] = z[k]; let n = 0, t = 0;
+          for (let y = Math.floor(c * H); y < Math.floor(e * H); y++) for (let x = Math.floor(a * W); x < Math.floor(b * W); x++){ t++; if (Math.abs(g[y * W + x] - prev[y * W + x]) > 28) n++; }
+          f[k] = n / t;
+        }
+        const s = Object.entries(f).sort((a, b) => b[1] - a[1]);
+        Object.values(zoneEls).forEach(el => el.classList.remove('hit'));
+        if (Date.now() > cool && s[0][1] > .1 && s[0][1] > s[1][1] * 2){ zoneEls[s[0][0]].classList.add('hit'); cool = Date.now() + 1100; move(s[0][0]); }
+      }
+      prev = g;
+    };
+    extra = h('p', { class:'muted small', style:'margin:8px 0 0' }, 'İpucu: Kameradan yaklaşık 1 metre uzakta dur ve sadece elini salla. Arkada hareket eden kimse olmasın.');
+  } else {
+    const det = detView(); let last = null, stable = 0, armed = true, empty = 0;
+    cam.onFrame = (img, W, H) => {
+      const c = boxColor(img, W, H);
+      if (c && c === last) stable++; else stable = c ? 1 : 0;
+      last = c; if (!c){ empty++; if (empty >= 3) armed = true; } else empty = 0;
+      det.set(c, armed ? Math.min(1, stable / 4) : 1);
+      cam.box.style.borderColor = c ? COLOR_HEX[c] : '#fff';
+      if (c && armed && stable >= 4){ armed = false; move(c); }
+    };
+    extra = det.el;
+  }
+  const pad = h('div', { class:'colorpad' }, ...['U', 'D', 'L', 'R'].map(d => h('button', { style:`background:${COLOR_HEX[d]};${d === 'R' ? 'color:#16324F' : ''}`, 'aria-label':DIR_NAME[d], onclick:() => move(d) }, zones ? { U:'↑', D:'↓', L:'←', R:'→' }[d] : DIR_COLOR[d])));
+  $app.append(h('div', { class:'stage' }, h('div', null, board.wrap, h('div', { class:'row', style:'margin-top:12px' }, counter, h('button', { class:'ghost', onclick:() => { board.reset(); moves = 0; done = false; paint(); } }, 'Baştan başla'))),
+    h('div', { class:'panel' }, cam.el, cam.note, extra, h('p', { class:'small', style:'margin:14px 0 0;font-weight:800' }, 'Kamerasız deneme butonları'), pad)));
+  paint();
+  cleanup = () => cam.stop();
+}
+SCREENS.renk = i => liveGame('renk', 'Renk Avı', 'Bilgisayar kameradaki her noktanın rengini sayılarla görür. Yeşil yukarı, kırmızı aşağı, mavi sola, sarı sağa! Kalem, top, oyuncak… renkli her şeyi kullanabilirsin.', i, false);
+SCREENS.hareket = i => liveGame('hareket', 'Hareketle Yönlendir', 'Bilgisayar iki kamera karesini karşılaştırır ve değişen yerleri bulur. Buna hareket algılama denir. Elini ekranın kenarlarında salla, Fıstık o yöne gitsin.', i, true);
+
+/* ============ boot ============ */
+(function boot(){
+  const tok = (location.hash || '').slice(1);
+  go(SCREENS[tok] ? tok : 'home');
+})();
+</script>
+</body></html>
