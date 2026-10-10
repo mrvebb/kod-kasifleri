@@ -10,6 +10,7 @@ Selçuk Üniversitesi Bilgisayar Mühendisliği · Topluma Hizmet Uygulamaları 
 | Bölüm | Oyun | Kazanım |
 |---|---|---|
 | Algoritma Adası | Hazine Avı (12 bölüm) | Sıralama, algoritma, döngü |
+| | Kod Rallisi (8 yarış) | Göreli yön (araca göre sağ/sol), en kısa yol, verimli algoritma |
 | | Hata Avcısı | Hata ayıklama |
 | | Robot Aşçı | Adım sırası (bilgisayarsız da oynanabilir) |
 | | Örüntü Bulmaca | Örüntü tanıma |
